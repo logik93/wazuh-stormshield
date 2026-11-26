@@ -12,6 +12,7 @@ Dla Fortinet FortiGate, Cisco ASA, pfSense i Palo Alto skorzystaj z dekoderów d
 - [Instalacja, konfiguracja sysloga i wycofanie zmian](docs/instalacja.md)
 - [Pola, reguły, testy i źródła](docs/dekodery-i-reguly.md)
 - [Jak zebrać i zanonimizować próbki ze Stormshielda](docs/probki-sns.md)
+- [Dashboard Stormshield SNS i instrukcja importu](dashboard/README.md)
 - [Licencja MIT](LICENSE)
 
 ## Szybki test
