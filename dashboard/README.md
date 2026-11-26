@@ -6,7 +6,7 @@
 
 ## Aktualizacja istniejącego dashboardu
 
-Zaimportuj plik z opcją **Overwrite**. Identyfikator dashboardu i identyfikatory dotychczasowych 11 paneli są takie same. Jeśli korzystasz z własnego ID wzorca indeksu, użyj go również przy aktualizacji.
+Zaimportuj plik z opcją **Overwrite** w tym samym tenancie. Zostaw wyłączone **Create new copies**, aby kolejne aktualizacje trafiały do tych samych obiektów. Import powinien objąć 13 obiektów. Oryginalny dashboard ma identyfikator `logik93-stormshield-sns-overview`, widoczny w adresie po `#/view/`. Jeśli poprzedni import utworzył kopię z innym identyfikatorem, otwórz dashboard o oryginalnym identyfikatorze po aktualizacji. Jeśli korzystasz z własnego ID wzorca indeksu, użyj go również przy aktualizacji.
 
 Jeżeli w **Visualize** widzisz sześć angielskich pozycji zaczynających się od `Stormshield -`, to wizualizacje starszego pakietu. Nowy dashboard obejmuje odpowiadające im widoki. Jeśli chcesz uporządkować listę, wyeksportuj poprzedni dashboard wraz z wizualizacjami jako kopię, sprawdź nowy widok, a potem usuń w **Saved Objects** stary dashboard i tylko te sześć wizualizacji, o ile inne dashboardy ich nie używają. Zachowaj wzorzec indeksu alertów.
 
