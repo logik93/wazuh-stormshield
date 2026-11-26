@@ -1,0 +1,200 @@
+<!-- Match complete WELF tokens so keys inside quoted values are ignored. -->
+<var name="welf_prefix">^(?:[^\s=]+=(?:"(?:\\.|[^"\\])*"|[^"\s]*)\s+)*?</var>
+<var name="welf_value">(?|"((?:\\.|[^"\\])+)"|([^"\s]+))(?=\s|\z)</var>
+
+<decoder name="stormshield-sns">
+  <type>syslog</type>
+  <prematch type="pcre2">^id=(?:"firewall"|firewall)\s+</prematch>
+</decoder>
+
+<decoder name="stormshield-sns">
+  <parent>stormshield-sns</parent>
+  <regex type="pcre2">(?x)$welf_prefix logtype=$welf_value</regex>
+  <order>sns.logtype</order>
+</decoder>
+
+<decoder name="stormshield-sns">
+  <parent>stormshield-sns</parent>
+  <regex type="pcre2">(?x)$welf_prefix fw=$welf_value</regex>
+  <order>sns.device</order>
+</decoder>
+
+<decoder name="stormshield-sns">
+  <parent>stormshield-sns</parent>
+  <regex type="pcre2">(?x)$welf_prefix time=$welf_value</regex>
+  <order>sns.time</order>
+</decoder>
+
+<decoder name="stormshield-sns">
+  <parent>stormshield-sns</parent>
+  <regex type="pcre2">(?x)$welf_prefix tz=$welf_value</regex>
+  <order>sns.timezone</order>
+</decoder>
+
+<decoder name="stormshield-sns">
+  <parent>stormshield-sns</parent>
+  <regex type="pcre2">(?x)$welf_prefix pri=$welf_value</regex>
+  <order>sns.priority</order>
+</decoder>
+
+<decoder name="stormshield-sns">
+  <parent>stormshield-sns</parent>
+  <regex type="pcre2">(?x)$welf_prefix src=(?|"(\d{1,3}(?:\.\d{1,3}){3}|[\da-fA-F]*:[\da-fA-F:.]+)"|(\d{1,3}(?:\.\d{1,3}){3}|[\da-fA-F]*:[\da-fA-F:.]+))(?=\s|\z)</regex>
+  <order>srcip</order>
+</decoder>
+
+<decoder name="stormshield-sns">
+  <parent>stormshield-sns</parent>
+  <regex type="pcre2">(?x)$welf_prefix dst=(?|"(\d{1,3}(?:\.\d{1,3}){3}|[\da-fA-F]*:[\da-fA-F:.]+)"|(\d{1,3}(?:\.\d{1,3}){3}|[\da-fA-F]*:[\da-fA-F:.]+))(?=\s|\z)</regex>
+  <order>dstip</order>
+</decoder>
+
+<decoder name="stormshield-sns">
+  <parent>stormshield-sns</parent>
+  <regex type="pcre2">(?x)$welf_prefix srcport=$welf_value</regex>
+  <order>srcport</order>
+</decoder>
+
+<decoder name="stormshield-sns">
+  <parent>stormshield-sns</parent>
+  <regex type="pcre2">(?x)$welf_prefix dstport=$welf_value</regex>
+  <order>dstport</order>
+</decoder>
+
+<decoder name="stormshield-sns">
+  <parent>stormshield-sns</parent>
+  <regex type="pcre2">(?x)$welf_prefix ipproto=$welf_value</regex>
+  <order>protocol</order>
+</decoder>
+
+<decoder name="stormshield-sns">
+  <parent>stormshield-sns</parent>
+  <regex type="pcre2">(?x)$welf_prefix proto=$welf_value</regex>
+  <order>sns.application</order>
+</decoder>
+
+<decoder name="stormshield-sns">
+  <parent>stormshield-sns</parent>
+  <regex type="pcre2">(?x)$welf_prefix srcifname=$welf_value</regex>
+  <order>sns.source_interface</order>
+</decoder>
+
+<decoder name="stormshield-sns">
+  <parent>stormshield-sns</parent>
+  <regex type="pcre2">(?x)$welf_prefix dstifname=$welf_value</regex>
+  <order>sns.destination_interface</order>
+</decoder>
+
+<decoder name="stormshield-sns">
+  <parent>stormshield-sns</parent>
+  <regex type="pcre2">(?x)$welf_prefix action=$welf_value</regex>
+  <order>sns.action</order>
+</decoder>
+
+<decoder name="stormshield-sns">
+  <parent>stormshield-sns</parent>
+  <regex type="pcre2">(?x)$welf_prefix ruleid=$welf_value</regex>
+  <order>sns.policy_id</order>
+</decoder>
+
+<decoder name="stormshield-sns">
+  <parent>stormshield-sns</parent>
+  <regex type="pcre2">(?x)$welf_prefix rulename=$welf_value</regex>
+  <order>sns.policy_name</order>
+</decoder>
+
+<decoder name="stormshield-sns">
+  <parent>stormshield-sns</parent>
+  <regex type="pcre2">(?x)$welf_prefix user=$welf_value</regex>
+  <order>srcuser</order>
+</decoder>
+
+<decoder name="stormshield-sns">
+  <parent>stormshield-sns</parent>
+  <regex type="pcre2">(?x)$welf_prefix domain=$welf_value</regex>
+  <order>sns.domain</order>
+</decoder>
+
+<decoder name="stormshield-sns">
+  <parent>stormshield-sns</parent>
+  <regex type="pcre2">(?x)$welf_prefix address=$welf_value</regex>
+  <order>sns.management_ip</order>
+</decoder>
+
+<decoder name="stormshield-sns">
+  <parent>stormshield-sns</parent>
+  <regex type="pcre2">(?x)$welf_prefix method=$welf_value</regex>
+  <order>sns.auth_method</order>
+</decoder>
+
+<decoder name="stormshield-sns">
+  <parent>stormshield-sns</parent>
+  <regex type="pcre2">(?x)$welf_prefix error=$welf_value</regex>
+  <order>sns.error</order>
+</decoder>
+
+<decoder name="stormshield-sns">
+  <parent>stormshield-sns</parent>
+  <regex type="pcre2">(?x)$welf_prefix msg=$welf_value</regex>
+  <order>sns.message</order>
+</decoder>
+
+<decoder name="stormshield-sns">
+  <parent>stormshield-sns</parent>
+  <regex type="pcre2">(?x)$welf_prefix alarmid=$welf_value</regex>
+  <order>sns.alarm_id</order>
+</decoder>
+
+<decoder name="stormshield-sns">
+  <parent>stormshield-sns</parent>
+  <regex type="pcre2">(?x)$welf_prefix class=$welf_value</regex>
+  <order>sns.alarm_class</order>
+</decoder>
+
+<decoder name="stormshield-sns">
+  <parent>stormshield-sns</parent>
+  <regex type="pcre2">(?x)$welf_prefix risk=$welf_value</regex>
+  <order>sns.risk</order>
+</decoder>
+
+<decoder name="stormshield-sns">
+  <parent>stormshield-sns</parent>
+  <regex type="pcre2">(?x)$welf_prefix localnet=$welf_value</regex>
+  <order>sns.local_network</order>
+</decoder>
+
+<decoder name="stormshield-sns">
+  <parent>stormshield-sns</parent>
+  <regex type="pcre2">(?x)$welf_prefix remotenet=$welf_value</regex>
+  <order>sns.remote_network</order>
+</decoder>
+
+<decoder name="stormshield-sns">
+  <parent>stormshield-sns</parent>
+  <regex type="pcre2">(?x)$welf_prefix service=$welf_value</regex>
+  <order>sns.service</order>
+</decoder>
+
+<decoder name="stormshield-sns">
+  <parent>stormshield-sns</parent>
+  <regex type="pcre2">(?x)$welf_prefix modsrc=$welf_value</regex>
+  <order>sns.translated_source</order>
+</decoder>
+
+<decoder name="stormshield-sns">
+  <parent>stormshield-sns</parent>
+  <regex type="pcre2">(?x)$welf_prefix modsrcport=$welf_value</regex>
+  <order>sns.translated_source_port</order>
+</decoder>
+
+<decoder name="stormshield-sns">
+  <parent>stormshield-sns</parent>
+  <regex type="pcre2">(?x)$welf_prefix origdst=$welf_value</regex>
+  <order>sns.original_destination</order>
+</decoder>
+
+<decoder name="stormshield-sns">
+  <parent>stormshield-sns</parent>
+  <regex type="pcre2">(?x)$welf_prefix origdstport=$welf_value</regex>
+  <order>sns.original_destination_port</order>
+</decoder>

@@ -1,0 +1,27 @@
+<group name="mikrotik,routeros,">
+  <rule id="110520" level="0">
+    <decoded_as>mikrotik-routeros</decoded_as>
+    <description>MikroTik RouterOS event</description>
+  </rule>
+
+  <rule id="110521" level="4">
+    <if_sid>110520</if_sid>
+    <field name="routeros.verdict" type="pcre2">^DROP$</field>
+    <description>MikroTik RouterOS: traffic blocked by policy</description>
+    <group>firewall_drop,</group>
+  </rule>
+
+  <rule id="110522" level="6">
+    <if_sid>110520</if_sid>
+    <field name="routeros.auth_event" type="pcre2">^login failure$</field>
+    <description>MikroTik RouterOS: login failure</description>
+    <group>authentication_failed,</group>
+  </rule>
+
+  <rule id="110523" level="3">
+    <if_sid>110520</if_sid>
+    <field name="routeros.dhcp_event" type="pcre2">^assigned$</field>
+    <description>MikroTik RouterOS: DHCP lease assigned</description>
+    <group>dhcp,</group>
+  </rule>
+</group>

@@ -1,0 +1,41 @@
+<!-- RouterOS 7 BSD syslog. WAZUH-DROP identifies a configured firewall log prefix. -->
+<decoder name="mikrotik-routeros">
+  <type>syslog</type>
+  <prematch type="pcre2">^(?:(?:[a-z]+(?:,[a-z]+)+\s+)?(?:WAZUH-DROP\s+|login failure for user\s+|user\s+\S+\s+logged (?:in|out) from\s+)|(?:dhcp,info\s+)?\S+\s+(?:assigned|deassigned)\s+\d{1,3}(?:\.\d{1,3}){3}\s+for\s+(?:[\da-fA-F]{2}:){5}[\da-fA-F]{2}\b)</prematch>
+</decoder>
+
+<decoder name="mikrotik-routeros">
+  <parent>mikrotik-routeros</parent>
+  <regex type="pcre2">^(?:[a-z]+(?:,[a-z]+)+\s+)?WAZUH-(DROP)\s+</regex>
+  <order>routeros.verdict</order>
+</decoder>
+
+<decoder name="mikrotik-routeros">
+  <parent>mikrotik-routeros</parent>
+  <regex type="pcre2">\bin:(\S+)\s+out:([^,\s]+)</regex>
+  <order>routeros.input_interface,routeros.output_interface</order>
+</decoder>
+
+<decoder name="mikrotik-routeros">
+  <parent>mikrotik-routeros</parent>
+  <regex type="pcre2">\bproto\s+(\w+)(?:\s+\([^)]*\))?,\s+(\d{1,3}(?:\.\d{1,3}){3}):(\d+)->(\d{1,3}(?:\.\d{1,3}){3}):(\d+)(?=[,\s]|$)</regex>
+  <order>protocol,srcip,srcport,dstip,dstport</order>
+</decoder>
+
+<decoder name="mikrotik-routeros">
+  <parent>mikrotik-routeros</parent>
+  <regex type="pcre2">^(?:[a-z]+(?:,[a-z]+)+\s+)?(login failure) for user\s+(\S+)\s+from\s+([\da-fA-F:.]+)\s+via\s+(\S+)</regex>
+  <order>routeros.auth_event,srcuser,srcip,routeros.auth_method</order>
+</decoder>
+
+<decoder name="mikrotik-routeros">
+  <parent>mikrotik-routeros</parent>
+  <regex type="pcre2">^(?:[a-z]+(?:,[a-z]+)+\s+)?user\s+(\S+)\s+(logged (?:in|out)) from\s+([\da-fA-F:.]+)\s+via\s+(\S+)</regex>
+  <order>srcuser,routeros.auth_event,srcip,routeros.auth_method</order>
+</decoder>
+
+<decoder name="mikrotik-routeros">
+  <parent>mikrotik-routeros</parent>
+  <regex type="pcre2">^(?:dhcp,info\s+)?(\S+)\s+(assigned|deassigned)\s+(\d{1,3}(?:\.\d{1,3}){3})\s+for\s+((?:[\da-fA-F]{2}:){5}[\da-fA-F]{2})(?:\s+(\S+))?</regex>
+  <order>routeros.dhcp_server,routeros.dhcp_event,routeros.lease_ip,routeros.client_mac,routeros.client_hostname</order>
+</decoder>

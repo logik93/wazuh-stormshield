@@ -1,0 +1,316 @@
+[
+  {
+    "name": "SNS: blokada ICMP bez portów",
+    "log": "Feb 10 17:00:00 branch-fw id=firewall time=\"2026-02-10 17:00:00\" fw=\"edge-1\" src=192.0.2.20 dst=198.51.100.77 ipproto=icmp action=Block logtype=\"filter\"",
+    "decoder": "stormshield-sns",
+    "rule": 110501,
+    "level": 4,
+    "fields": {
+      "sns.time": "2026-02-10 17:00:00",
+      "sns.logtype": "filter",
+      "sns.action": "Block",
+      "srcip": "192.0.2.20",
+      "dstip": "198.51.100.77",
+      "protocol": "icmp",
+      "srcport": null,
+      "dstport": null
+    }
+  },
+  {
+    "name": "SNS: blokada rozgłoszenia NetBIOS Datagram",
+    "log": "id=firewall time=\"2026-02-10 17:01:37\" fw=\"edge-netbios\" tz=+0100 startime=\"2026-02-10 17:01:36\" pri=5 confid=01 slotlevel=2 ruleid=47 rulename=\"office-policy\" srcif=\"Ethernet1\" srcifname=\"in\" ipproto=udp proto=netbios-dgm src=192.0.2.155 srcport=138 srcportname=netbios-dgm srcmac=00:00:5E:00:53:01 dst=192.0.2.255 dstport=138 dstportname=netbios-dgm ipv=4 sent=0 rcvd=0 duration=0.00 action=block logtype=\"filter\"",
+    "decoder": "stormshield-sns",
+    "rule": 110501,
+    "level": 4,
+    "fields": {
+      "protocol": "udp",
+      "sns.application": "netbios-dgm",
+      "sns.action": "block",
+      "sns.policy_id": "47",
+      "srcip": "192.0.2.155",
+      "srcport": "138",
+      "dstip": "192.0.2.255",
+      "dstport": "138"
+    }
+  },
+  {
+    "name": "SNS: IPv6, połączenie dozwolone i pola NAT",
+    "log": "id=\"firewall\" origdstport=8443 modsrc=\"2001:db8::20\" logtype=connection fw=edge-1 dstport=443 src=\"2001:db8::3\" ipproto=tcp dst=2001:db8:1::2 action=pass srcport=55123 origdst=2001:db8:2::2 modsrcport=55123",
+    "decoder": "stormshield-sns",
+    "rule": 110500,
+    "level": 0,
+    "fields": {
+      "srcip": "2001:db8::3",
+      "srcport": "55123",
+      "dstip": "2001:db8:1::2",
+      "dstport": "443",
+      "sns.translated_source": "2001:db8::20",
+      "sns.translated_source_port": "55123",
+      "sns.original_destination": "2001:db8:2::2",
+      "sns.original_destination_port": "8443"
+    }
+  },
+  {
+    "name": "SNS: klucze w cytowanej wiadomości",
+    "log": "id=firewall fw=edge-1 msg=\"note \\\"example\\\" src=192.0.2.191 action=block logtype=alarm\" modsrc=192.0.2.199 action=pass logtype=filter",
+    "decoder": "stormshield-sns",
+    "rule": 110500,
+    "level": 0,
+    "fields": {
+      "srcip": null,
+      "sns.action": "pass",
+      "sns.logtype": "filter",
+      "sns.message": "note \\\"example\\\" src=192.0.2.191 action=block logtype=alarm"
+    }
+  },
+  {
+    "name": "SNS: filtr WWW",
+    "log": "id=firewall fw=edge-1 dst=198.51.100.4 proto=https action=\"block\" msg=\"Blocked by policy\" logtype=\"web\"",
+    "decoder": "stormshield-sns",
+    "rule": 110501,
+    "level": 4,
+    "fields": {
+      "sns.logtype": "web",
+      "sns.application": "https"
+    }
+  },
+  {
+    "name": "SNS: blokujący alarm z alarmid na początku",
+    "log": "id=firewall alarmid=147 risk=85 fw=edge-1 logtype=\"alarm\" src=192.0.2.22 class=protocol action=block msg=\"Unexpected protocol data\" dst=198.51.100.28",
+    "decoder": "stormshield-sns",
+    "rule": 110503,
+    "level": 9,
+    "fields": {
+      "sns.alarm_id": "147",
+      "sns.risk": "85",
+      "sns.alarm_class": "protocol",
+      "srcip": "192.0.2.22"
+    }
+  },
+  {
+    "name": "SNS: alarm systemowy",
+    "log": "id=firewall fw=edge-1 alarmid=8 class=system action=block msg=\"System health event\" logtype=alarm",
+    "decoder": "stormshield-sns",
+    "rule": 110502,
+    "level": 6,
+    "fields": {
+      "sns.alarm_id": "8",
+      "srcip": null
+    }
+  },
+  {
+    "name": "SNS: błąd logowania z kodem",
+    "log": "id=firewall fw=edge-1 logtype=auth user=\"test user\" domain=\"\" src=192.0.2.56 error=\"03\" method=\"OPENVPN\"",
+    "decoder": "stormshield-sns",
+    "rule": 110504,
+    "level": 6,
+    "fields": {
+      "srcuser": "test user",
+      "sns.domain": null,
+      "sns.error": "03",
+      "sns.auth_method": "OPENVPN"
+    }
+  },
+  {
+    "name": "SNS: błąd bez kodu w nagłówku BSD",
+    "log": "Feb 10 17:00:00 branch-fw id=firewall fw=edge-1 src=192.0.2.57 user=operator msg=\"Authentication failed\" logtype=auth",
+    "decoder": "stormshield-sns",
+    "rule": 110505,
+    "level": 6,
+    "fields": {
+      "srcip": "192.0.2.57"
+    }
+  },
+  {
+    "name": "SNS: kod sukcesu ma pierwszeństwo przed komunikatem",
+    "log": "Feb 10 17:00:00 branch-fw id=firewall fw=edge-1 logtype=auth error=\"0\" msg=\"Authentication failed\"",
+    "decoder": "stormshield-sns",
+    "rule": 110500,
+    "level": 0,
+    "fields": {
+      "sns.error": "0"
+    }
+  },
+  {
+    "name": "SNS: VPN bez alertu",
+    "log": "id=firewall fw=edge-1 logtype=xvpn user=operator src=unknown remotenet=192.0.2.0/24 localnet=198.51.100.0/24 msg=\"SSL VPN tunnel opened\"",
+    "decoder": "stormshield-sns",
+    "rule": 110500,
+    "level": 0,
+    "fields": {
+      "sns.logtype": "xvpn",
+      "sns.remote_network": "192.0.2.0/24",
+      "srcip": null
+    }
+  },
+  {
+    "name": "SNS: nieudany VPN",
+    "log": "id=firewall fw=edge-1 logtype=vpn dst=198.51.100.3 msg=\"IKE negotiation timed out\" src=192.0.2.1",
+    "decoder": "stormshield-sns",
+    "rule": 110506,
+    "level": 7,
+    "fields": {
+      "sns.logtype": "vpn",
+      "sns.message": "IKE negotiation timed out"
+    }
+  },
+  {
+    "name": "SNS: zmiana konfiguracji",
+    "log": "id=firewall fw=edge-1 user=operator address=192.0.2.11 error=0 msg=\"CONFIG DNS ACTIVATE\" logtype=server",
+    "decoder": "stormshield-sns",
+    "rule": 110507,
+    "level": 5,
+    "fields": {
+      "sns.management_ip": "192.0.2.11"
+    }
+  },
+  {
+    "name": "SNS: odczyt konfiguracji",
+    "log": "id=firewall fw=edge-1 user=operator address=192.0.2.11 error=0 msg=\"CONFIG LOG SHOW\" logtype=server",
+    "decoder": "stormshield-sns",
+    "rule": 110500,
+    "level": 0,
+    "fields": {}
+  },
+  {
+    "name": "SNS: nieznana rodzina",
+    "log": "id=firewall fw=edge-1 logtype=future service=example action=block",
+    "decoder": "stormshield-sns",
+    "rule": 110500,
+    "level": 0,
+    "fields": {
+      "sns.logtype": "future",
+      "sns.service": "example"
+    }
+  },
+  {
+    "name": "RouterOS: blokada",
+    "log": "Feb 10 17:00:00 router firewall,info WAZUH-DROP forward: in:ether1 out:bridge1, proto TCP (SYN), 192.0.2.8:55555->198.51.100.8:443, len 60",
+    "decoder": "mikrotik-routeros",
+    "rule": 110521,
+    "level": 4,
+    "fields": {
+      "routeros.input_interface": "ether1",
+      "routeros.output_interface": "bridge1",
+      "protocol": "TCP",
+      "srcip": "192.0.2.8",
+      "srcport": "55555",
+      "dstip": "198.51.100.8",
+      "dstport": "443"
+    }
+  },
+  {
+    "name": "RouterOS: nieudane logowanie",
+    "log": "Feb 10 17:00:00 router system,error,critical login failure for user operator from 2001:db8::16 via ssh",
+    "decoder": "mikrotik-routeros",
+    "rule": 110522,
+    "level": 6,
+    "fields": {
+      "routeros.auth_method": "ssh",
+      "srcip": "2001:db8::16",
+      "srcuser": "operator"
+    }
+  },
+  {
+    "name": "RouterOS: udane logowanie",
+    "log": "Feb 10 17:00:00 router user operator logged in from 192.0.2.30 via winbox",
+    "decoder": "mikrotik-routeros",
+    "rule": 110520,
+    "level": 0,
+    "fields": {
+      "routeros.auth_event": "logged in",
+      "routeros.auth_method": "winbox"
+    }
+  },
+  {
+    "name": "RouterOS: przydzielenie DHCP",
+    "log": "Feb 10 17:00:00 router dhcp1 assigned 192.0.2.32 for 00:00:5E:00:53:01 client-1",
+    "decoder": "mikrotik-routeros",
+    "rule": 110523,
+    "level": 3,
+    "fields": {
+      "routeros.dhcp_server": "dhcp1",
+      "routeros.lease_ip": "192.0.2.32",
+      "routeros.client_mac": "00:00:5E:00:53:01",
+      "routeros.client_hostname": "client-1"
+    }
+  },
+  {
+    "name": "RouterOS: zwolnienie DHCP",
+    "log": "Feb 10 17:00:00 router dhcp,info dhcp1 deassigned 192.0.2.32 for 00:00:5E:00:53:01",
+    "decoder": "mikrotik-routeros",
+    "rule": 110520,
+    "level": 0,
+    "fields": {
+      "routeros.dhcp_event": "deassigned",
+      "routeros.client_hostname": null
+    }
+  },
+  {
+    "name": "Inny produkt z polami key=value",
+    "log": "date=2026-02-25 time=13:00:00 devname=\"example\" devid=\"FGT000\" logid=\"0001000014\" type=\"traffic\" subtype=\"local\" level=\"notice\" srcip=192.0.2.1 dstip=198.51.100.1 action=\"deny\" service=\"udp/5353\"",
+    "decoder": "fortigate-firewall-v5",
+    "rule": 81618,
+    "level": 1,
+    "fields": {
+      "sns.logtype": null
+    }
+  },
+  {
+    "name": "SNS: alarm http z końcem CR",
+    "log": "id=firewall fw=\"edge-test\" tz=+0100 pri=4 ruleid=20 srcif=\"Ethernet1\" srcifname=\"in\" ipproto=tcp proto=http src=192.0.2.11 srcport=55000 srcmac=00:00:5E:00:53:01 dst=198.51.100.21 dstport=80 origdst=127.0.0.2 origdstport=8080 ipv=4 action=pass msg=\"Remote Access : Example (HTTP)\" class=http:client:header classification=0 alarmid=90 target=dst logtype=\"alarm\"\r",
+    "decoder": "stormshield-sns",
+    "rule": 110502,
+    "level": 6,
+    "fields": {
+      "sns.logtype": "alarm",
+      "sns.action": "pass",
+      "sns.alarm_id": "90",
+      "sns.alarm_class": "http:client:header",
+      "sns.message": "Remote Access : Example (HTTP)",
+      "sns.risk": null,
+      "sns.application": "http",
+      "dstport": "80",
+      "sns.original_destination": "127.0.0.2",
+      "sns.translated_source": null
+    }
+  },
+  {
+    "name": "SNS: alarm ssl z końcem CR",
+    "log": "id=firewall fw=\"edge-test\" tz=+0100 pri=4 ruleid=20 srcif=\"Ethernet1\" srcifname=\"in\" ipproto=tcp proto=ssl src=192.0.2.11 srcport=55000 srcmac=00:00:5E:00:53:01 dst=198.51.100.21 dstport=443 modsrc=203.0.113.9 modsrcport=55000 ipv=4 action=block msg=\"TLS1.3 : 0-RTT not allowed\" class=protocol classification=0 alarmid=734 target=dst risk=10 logtype=\"alarm\"\r",
+    "decoder": "stormshield-sns",
+    "rule": 110503,
+    "level": 9,
+    "fields": {
+      "sns.logtype": "alarm",
+      "sns.action": "block",
+      "sns.alarm_id": "734",
+      "sns.alarm_class": "protocol",
+      "sns.message": "TLS1.3 : 0-RTT not allowed",
+      "sns.risk": "10",
+      "sns.application": "ssl",
+      "dstport": "443",
+      "sns.original_destination": null,
+      "sns.translated_source": "203.0.113.9"
+    }
+  },
+  {
+    "name": "SNS: alarm smtp z końcem CR",
+    "log": "id=firewall fw=\"edge-test\" tz=+0100 pri=4 ruleid=20 srcif=\"Ethernet1\" srcifname=\"in\" ipproto=tcp proto=smtp src=192.0.2.11 srcport=55000 srcmac=00:00:5E:00:53:01 dst=198.51.100.21 dstport=25 modsrc=203.0.113.9 modsrcport=55000 ipv=4 action=block msg=\"Invalid char in SMTP header (ClientCmdNUL)\" class=protocol classification=0 alarmid=122 target=dst risk=2 logtype=\"alarm\"\r",
+    "decoder": "stormshield-sns",
+    "rule": 110503,
+    "level": 9,
+    "fields": {
+      "sns.logtype": "alarm",
+      "sns.action": "block",
+      "sns.alarm_id": "122",
+      "sns.alarm_class": "protocol",
+      "sns.message": "Invalid char in SMTP header (ClientCmdNUL)",
+      "sns.risk": "2",
+      "sns.application": "smtp",
+      "dstport": "25",
+      "sns.original_destination": null,
+      "sns.translated_source": "203.0.113.9"
+    }
+  }
+]
