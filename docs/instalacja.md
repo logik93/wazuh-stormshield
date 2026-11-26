@@ -92,6 +92,10 @@ Tematy i szczegóły zdalnej akcji sprawdź w konfiguracji swojej wersji RouterO
 2. Sprawdź zdarzenie z urządzenia na managerze, lokalnie w `/var/ossec/logs/alerts/alerts.json` albo w Wazuh Dashboard po `rule.groups:stormshield` lub `rule.groups:mikrotik`. Gdy faza 3 pokazuje poziom 0, wpis jest dekodowany bez alertu. Sprawdź ustawienie `log_alert_level`, jeżeli poziom reguły jest niższy niż próg managera.
 3. Jeśli dekodowanie lokalne działa, a alert nie dociera po sieci, sprawdź transport, faktyczny adres źródłowy widziany przez managera, `allowed-ips`, port oraz komunikaty managera w `/var/ossec/logs/ossec.log`. Do sprawdzenia rzeczywistej treści zdarzeń użyj surowego logu z przekaźnika lub archiwum Wazuh, jeżeli jest już włączone.
 
+## 5. Zaimportuj dashboard Stormshield SNS
+
+Zaimportuj [plik NDJSON](../dashboard/stormshield-sns.ndjson) przez **Dashboard Management → Saved Objects → Import**. Następnie otwórz **Stormshield SNS · Monitorowanie**, wybierz okres po wdrożeniu i sprawdź, czy pojawiają się nowe alerty. [Instrukcja importu i wybór wzorca indeksu](../dashboard/README.md)
+
 ## Wycofanie zmian
 
 Usuń wyłącznie pliki dodane w kroku 1 albo przywróć ich poprzednie wersje. Jeżeli zmiana obejmowała nasłuch, przywróć właściwy blok `remote` z kopii. Sprawdź konfigurację i uruchom ponownie managera jak w kroku 2.
