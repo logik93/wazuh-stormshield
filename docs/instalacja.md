@@ -22,6 +22,20 @@ Zachowaj kopię starego zestawu poza katalogami ładowanymi przez Wazuh. Jeżeli
 
 ## 1. Załaduj wybrane moduły
 
+### Instalator interaktywny dla Linuksa
+
+Skrypt wymaga Bash, systemd i `flock` z pakietu `util-linux`. Na hoście z managerem w `/var/ossec` uruchom:
+
+```bash
+sudo ./install.sh
+```
+
+Wybierz Stormshield SNS, MikroTik RouterOS lub oba moduły. Skrypt pokaże listę plików i poprosi o potwierdzenie przed ich zmianą. Sprawdzi konfigurację przez `wazuh-analysisd -t`, zrestartuje managera i sprawdzi stan usługi. Jeśli walidacja lub restart się nie powiedzie, skrypt odtworzy pliki sprzed operacji. Po zakończeniu wyświetli ścieżkę do kopii, jeśli operacja została rozpoczęta.
+
+Jeśli syslog już działa, przejdź do kroku 4, a następnie zaimportuj dashboard. Dla nowego nasłuchu wykonaj kroki 2 i 3. Skrypt zarządza plikami reguł i dekoderów. Konfigurację odbioru sysloga i dashboard dodajesz osobno.
+
+### Instalacja ręczna
+
 Na hoście managera, z katalogu repozytorium, sprawdź czy zakresy `110500–110509` i `110520–110523` są wolne w Twoim zestawie reguł. Jeżeli inny pakiet rozpoznaje te same komunikaty, wybierz jeden zestaw dekoderów i odpowiadających mu reguł. Przy aktualizacji zachowaj kopie zastępowanych plików XML oraz kopię `/var/ossec/etc/ossec.conf`.
 
 ```bash
@@ -97,5 +111,9 @@ Tematy i szczegóły zdalnej akcji sprawdź w konfiguracji swojej wersji RouterO
 Zaimportuj [plik NDJSON](../dashboard/stormshield-sns.ndjson) przez **Dashboard Management → Saved Objects → Import**. Następnie otwórz **Stormshield SNS · Monitorowanie**, wybierz okres po wdrożeniu i sprawdź, czy pojawiają się nowe alerty. [Instrukcja importu i wybór wzorca indeksu](../dashboard/README.md)
 
 ## Wycofanie zmian
+
+Jeśli używasz interaktywnego instalatora, uruchom `sudo ./uninstall.sh` i wybierz moduły do usunięcia. Skrypt usuwa ich pliki XML, waliduje konfigurację i restartuje managera. Poprzednie wersje plików znajdują się w katalogu kopii wskazanym po operacji. Jeśli przechodziłeś ze starszej integracji, przywróć jej pliki z osobnej kopii i ponownie sprawdź konfigurację przed restartem.
+
+Przy instalacji ręcznej wykonaj poniższe kroki.
 
 Usuń wyłącznie pliki dodane w kroku 1 albo przywróć ich poprzednie wersje. Jeżeli zmiana obejmowała nasłuch, przywróć właściwy blok `remote` z kopii. Sprawdź konfigurację i uruchom ponownie managera jak w kroku 2.

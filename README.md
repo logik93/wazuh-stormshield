@@ -15,6 +15,10 @@ Dla Fortinet FortiGate, Cisco ASA, pfSense i Palo Alto skorzystaj z dekoderów d
 - [Dashboard Stormshield SNS i instrukcja importu](dashboard/README.md)
 - [Licencja MIT](LICENSE)
 
+## Instalacja na Linuksie
+
+Na hoście managera Wazuh uruchom `sudo ./install.sh` i wybierz moduły. Aby je usunąć, uruchom `sudo ./uninstall.sh`. [Instrukcja konfiguracji, migracji i testu po wdrożeniu](docs/instalacja.md)
+
 ## Szybki test
 
 Z katalogu projektu uruchom `python3 tests/run.py`. Test wymaga Pythona 3 i działającego Dockera. Używa obrazu `wazuh/wazuh-manager:4.14.5` i sprawdza pola oraz reguły na logach syntetycznych. Wersję i sposób weryfikacji opisuje [dokumentacja testów](docs/dekodery-i-reguly.md#testy).
