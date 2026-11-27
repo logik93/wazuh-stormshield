@@ -134,7 +134,18 @@ def suggested_receiver(nas):
         return "adres IP hosta Wazuh/rsyslog"
 
 
-def configure(configs):
+def find_rsyslogd():
+    executable = shutil.which("rsyslogd")
+    if executable:
+        return executable
+    for directory in ("/usr/sbin", "/sbin", "/usr/local/sbin"):
+        path = Path(directory) / "rsyslogd"
+        if path.is_file() and os.access(path, os.X_OK):
+            return str(path)
+    return None
+
+
+def configure(configs, rsyslogd):
     changed = {path: text for path, text in configs.items()
                if not path.exists() or path.read_text() != text}
     if not changed:
@@ -151,7 +162,7 @@ def configure(configs):
     try:
         for path, text in changed.items():
             write_config(path, text)
-        run("rsyslogd", "-N1")
+        run(rsyslogd, "-N1")
         run(str(MANAGER / "bin/wazuh-analysisd"), "-t")
         run(str(MANAGER / "bin/wazuh-logcollector"), "-t")
         created_log = ensure_logfile()
@@ -219,9 +230,9 @@ def main():
             with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as probe:
                 probe.bind(("0.0.0.0", port))
 
-        configs = {OSSEC_CONF: wazuh_config(OSSEC_CONF.read_text()),
-                   RSYSLOG_CONF: rsyslog_config(nas, port)}
-        install_rsyslog = not shutil.which("rsyslogd")
+        ossec = wazuh_config(OSSEC_CONF.read_text())
+        rsyslogd = find_rsyslogd()
+        install_rsyslog = rsyslogd is None
         if install_rsyslog and not shutil.which("apt-get"):
             raise ValueError("Zainstaluj rsyslog za pomocą menedżera pakietów tej dystrybucji.")
         print(f"Z {nas} przez UDP/{port} → {LOG_FILE} → Wazuh.")
@@ -234,7 +245,10 @@ def main():
             return
         if install_rsyslog:
             run("apt-get", "install", "-y", "rsyslog")
-        configure(configs)
+            rsyslogd = find_rsyslogd()
+            if rsyslogd is None:
+                raise ValueError("Pakiet rsyslog zainstalowano, ale nie znaleziono programu rsyslogd.")
+        configure({OSSEC_CONF: ossec, RSYSLOG_CONF: rsyslog_config(nas, port)}, rsyslogd)
 
         print("\nW QuLog Center → Log Sender dodaj cel syslog:")
         print(f"  Odbiornik: {suggested_receiver(nas)}")
