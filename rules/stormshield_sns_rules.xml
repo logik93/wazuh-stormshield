@@ -15,14 +15,14 @@
   <rule id="110502" level="6">
     <if_sid>110500</if_sid>
     <field name="sns.logtype" type="pcre2">^alarm$</field>
-    <description>Stormshield SNS: appliance alarm</description>
+    <description>Stormshield SNS: alarm $(sns.alarm_id) ($(sns.message))</description>
   </rule>
 
   <rule id="110503" level="9">
     <if_sid>110502</if_sid>
     <field name="sns.alarm_class" type="pcre2" negate="yes">(?i)^system$</field>
     <field name="sns.action" type="pcre2">(?i)^(?:block|deny|drop|reject)$</field>
-    <description>Stormshield SNS: blocking security alarm</description>
+    <description>Stormshield SNS: blocking alarm $(sns.alarm_id) ($(sns.message))</description>
   </rule>
 
   <rule id="110504" level="6">

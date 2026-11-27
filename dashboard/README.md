@@ -21,13 +21,13 @@ Dashboard pokazuje nowe alerty z grup `stormshield` i `sns`. Liczniki, wykres w 
 
 W tabeli **Techniki MITRE ATT&CK** wiersz **Bez oznaczenia MITRE** zlicza alerty bez `rule.mitre.id`, na przykład zwykłe blokady ruchu. Techniki pojawiają się po zarejestrowaniu faktycznie oznaczonych alertów. W nowej integracji próg powtarzających się błędów logowania uruchamia regułę `110508` z oznaczeniem `T1110`.
 
-Liczniki pokazują dokumenty alertów. Licznik blokad uwzględnia także pojedyncze alerty korelacji `110509`. Rozkład alarmów grupuje wpisy według identyfikatora alarmu Stormshield, a wykres w czasie według poziomu reguły Wazuh.
+Liczniki pokazują dokumenty alertów. Licznik blokad uwzględnia także pojedyncze alerty korelacji `110509`. Rozkład alarmów grupuje wpisy według identyfikatora alarmu Stormshield i pokazuje opis z pola `msg`, a wykres w czasie według poziomu reguły Wazuh.
 
 | Panel | Reguły lub pola |
 | --- | --- |
 | Wszystkie alerty, oś czasu, zapory | `rule.groups`, `timestamp`, `rule.level`, `data.sns.device` |
 | Blokady ruchu, źródła i porty | `110501`, `110509`, `data.srcip`, `data.dstport` |
-| Alarmy | `110502`, `110503`, `data.sns.alarm_id` |
+| Alarmy | `110502`, `110503`, `data.sns.alarm_id`, `data.sns.message` |
 | Nieudane logowania | `110504`, `110505`, `110508`, `data.srcuser` |
 | Błędy VPN | `110506`, `data.sns.logtype` |
 | Techniki MITRE ATT&CK | `rule.mitre.id` i licznik alertów bez tego pola |

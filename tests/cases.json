@@ -273,7 +273,8 @@
       "dstport": "80",
       "sns.original_destination": "127.0.0.2",
       "sns.translated_source": null
-    }
+    },
+    "description": "Stormshield SNS: alarm 90 (Remote Access : Example (HTTP))"
   },
   {
     "name": "SNS: alarm ssl z końcem CR",
@@ -292,7 +293,8 @@
       "dstport": "443",
       "sns.original_destination": null,
       "sns.translated_source": "203.0.113.9"
-    }
+    },
+    "description": "Stormshield SNS: blocking alarm 734 (TLS1.3 : 0-RTT not allowed)"
   },
   {
     "name": "SNS: alarm smtp z końcem CR",
@@ -311,6 +313,7 @@
       "dstport": "25",
       "sns.original_destination": null,
       "sns.translated_source": "203.0.113.9"
-    }
+    },
+    "description": "Stormshield SNS: blocking alarm 122 (Invalid char in SMTP header (ClientCmdNUL))"
   }
 ]

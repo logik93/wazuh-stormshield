@@ -29,6 +29,18 @@ Dekoder rozpoznaje treść rozpoczynającą się od `id=firewall` lub `id="firew
 
 Poziom 0 umożliwia sprawdzenie dekodowania w `wazuh-logtest`. Jeśli potrzebujesz zachować także ruch dozwolony, skonfiguruj archiwizację Wazuh z retencją odpowiednią do wolumenu. W alertach JSON pola dynamiczne znajdziesz pod `data.sns`. Reguły oparte na komunikatach obejmują wskazane warianty angielskie. Korelację warto dostroić, gdy wiele klientów dzieli jeden adres NAT.
 
+## Jak czytać identyfikator alarmu SNS
+
+`alarmid` identyfikuje alarm w Stormshieldzie. Wazuh zachowuje go w `data.sns.alarm_id`, a tekst `msg` z urządzenia w `data.sns.message`. Dla reguł `110502` i `110503` opis nowego alertu zawiera oba pola w formacie `ID (opis)`. W tabeli alarmów na dashboardzie są one w osobnych kolumnach. Opis pochodzi z konkretnego komunikatu SNS, więc integracja działa także dla nowych identyfikatorów.
+
+| Przykład z logu SNS | Znaczenie |
+| --- | --- |
+| `90 (Remote Access : TeamViewer (HTTP))` | Zapora rozpoznała ruch zdalnego dostępu TeamViewer przez HTTP. O decyzji zapory informuje `action`. |
+| `734 (TLS1.3 : 0-RTT not allowed)` | Zapora odnotowała próbę przesłania wczesnych danych TLS 1.3 (0-RTT) w sytuacji, w której ich nie dopuszcza. |
+| `122 (Invalid char in SMTP header (ClientCmdNUL))` | Zapora zgłosiła niedozwolony znak NUL w ruchu SMTP. |
+
+Przy analizie sprawdź również akcję `data.sns.action`, klasę `data.sns.alarm_class` i pole `data.sns.risk`, jeśli występuje. Publiczna integracja Elastic tak samo zachowuje `alarmid` jako kod zdarzenia i odsyła do dokumentacji producenta. [Dokumentacja logów Stormshield SNS](https://documentation.stormshield.eu/SNS/v5/en/Content/Description_of_Audit_logs/Configure_logs.htm) · [Pipeline integracji Elastic](https://github.com/elastic/integrations/blob/main/packages/stormshield/data_stream/log/elasticsearch/ingest_pipeline/default.yml)
+
 ## MikroTik RouterOS
 
 Moduł rozpoznaje komunikaty zapory z prefiksem `WAZUH-DROP`, logowania i wylogowania z adresem IP oraz dzierżawy IPv4 `assigned` i `deassigned`. Dla obsługiwanego formatu ruchu TCP/UDP wydobywa adresy i porty IPv4 oraz interfejsy. Przy blokadzie w innym układzie pól sam prefiks wciąż umożliwia alert. Zdarzenia mają pola `routeros.*` oraz standardowe pola sieciowe Wazuh, gdy występują w obsługiwanym formacie.

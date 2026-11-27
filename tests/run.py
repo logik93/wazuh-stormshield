@@ -64,11 +64,14 @@ def check_event(case, sections):
         "level": None if case["level"] is None else str(case["level"]),
         **case["fields"],
     }
+    if "description" in case:
+        expected["description"] = case["description"]
     actual = {
         **decoded,
         "decoder": decoded.get("name", decoded.get("decoder")),
         "rule": matched.get("id", matched.get("Rule id")),
         "level": matched.get("level", matched.get("Level")),
+        "description": matched.get("description", matched.get("Description")),
     }
     return [
         f"{case['name']}: {key}: oczekiwano {value!r}, otrzymano {actual.get(key)!r}"
