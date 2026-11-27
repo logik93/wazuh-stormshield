@@ -14,6 +14,9 @@ def compact(value):
 
 
 def search_url(rule, aggregation):
+    condition = {"terms": {"rule.id": [str(value) for value in rule]}} if isinstance(rule, tuple) else {
+        "term": {"rule.id": str(rule)},
+    }
     return {
         "index": "wazuh-alerts-*",
         "body": {
@@ -24,7 +27,7 @@ def search_url(rule, aggregation):
                 "filter": [
                     "%dashboard_context-filter_clause%",
                     {"range": {"timestamp": {"%timefilter%": True}}},
-                    {"term": {"rule.id": str(rule)}},
+                    condition,
                 ],
             }},
             "aggs": {"values": aggregation},
@@ -140,6 +143,24 @@ def qnap_capacity():
     return spec
 
 
+def qnap_file_actions():
+    spec = table_spec(
+        search_url((110548, 110549), {"terms": {"field": "data.qnap.action", "size": 10}}),
+        [("Operacja SMB", "label", 0, .68), ("Alerty", "doc_count", .68, .32)],
+        "Brak zmian plików SMB.",
+    )
+    spec["signals"].append({
+        "name": "labels", "value": {
+            "add": "Dodanie", "write": "Zapis", "rename": "Zmiana nazwy",
+            "move": "Przeniesienie", "delete": "Usunięcie",
+        },
+    })
+    spec["data"][0]["transform"].append({
+        "type": "formula", "as": "label", "expr": "labels[lower(datum.key)] || datum.key",
+    })
+    return spec
+
+
 def mikrotik_table(rule, field, heading, empty_message):
     return table_spec(
         search_url(rule, {"terms": {"field": "data.routeros." + field, "size": 10}}),
@@ -183,6 +204,7 @@ def main():
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
     update_file("qnap-volumes-snmp.ndjson", {"logik93-qnap-qulog-volume-capacity": qnap_capacity()}, check=args.check)
+    update_file("qnap-qulog.ndjson", {"logik93-qnap-qulog-file-actions": qnap_file_actions()}, check=args.check)
     update_file("mikrotik-routeros.ndjson", {
         "logik93-mikrotik-routeros-interfaces": mikrotik_table(
             110521, "input_interface", "Interfejs", "Brak blokad z odczytanym interfejsem wejściowym.",

@@ -6,7 +6,7 @@ Każde urządzenie ma własny dashboard i plik importu.
 | --- | --- | ---: |
 | [Stormshield SNS · Monitorowanie](stormshield-sns.ndjson) | Blokady, alarmy, VPN, logowania i techniki MITRE | 16 |
 | [MikroTik RouterOS · Ruch i dostęp](mikrotik-routeros.ndjson) | Źródła, cele, porty i interfejsy blokad, metody logowania oraz klienci DHCP | 13 |
-| [QNAP QuLog · Ochrona danych i dostęp](qnap-qulog.ndjson) | Nadawcy sysloga, dostęp do NAS-a, wynik kopii i migawek oraz alerty o dyskach, RAID, sprzęcie i zasilaniu | 13 |
+| [QNAP QuLog · Ochrona danych i dostęp](qnap-qulog.ndjson) | Logowania, zmiany i usunięcia plików SMB, źródła sysloga, kopie oraz alerty sprzętowe | 17 |
 
 W każdym dashboardzie ustaw przedział czasu i rozwiń wpis w panelu **Ostatnie alerty**. Jeżeli urządzenie nie zarejestrowało danego zdarzenia w wybranym czasie, odpowiedni licznik pokaże zero, a tabela może być pusta. Dla QNAP-a najpierw [skonfiguruj odbiór logów QuLog](../docs/qnap.md).
 
@@ -30,6 +30,8 @@ Jeżeli w **Visualize** widzisz sześć angielskich pozycji zaczynających się 
 ## Sprawdzenie źródła logów QNAP
 
 W **Ostatnich alertach** i **Źródłach sysloga** pole `location` pokazuje adres nadawcy przy odbiorze bezpośrednim przez Wazuh. W logach ze starszego przekaźnika pole może zawierać ścieżkę do pliku. Kolumna `data.srcip` opisuje klienta z komunikatu, np. IP osoby logującej się do NAS-a. Aby przefiltrować dashboard do konkretnego NAS-a, wybierz w **Add filter** pole `location`.
+
+Dla logów dostępu `qulogd` najważniejsze widoki są u góry: błędy logowania, zmiany i usunięcia plików SMB. W dzienniku zmian sprawdzisz, kto wykonał operację, na jakim zasobie i z jakiego adresu. Odczyty SMB pozostają w archiwum, jeśli manager archiwizuje wszystkie logi. Widoki systemowe poniżej pokazują zdarzenia, gdy QuLog je wysyła.
 
 Domyślny dashboard jest przeznaczony do logów QuLog. Osobny [panel pojemności](qnap-volumes-snmp.ndjson) można dołączyć w instalacji, która zbiera [pomiary SNMPv3](../docs/qnap.md#wolne-miejsce-na-woluminach).
 

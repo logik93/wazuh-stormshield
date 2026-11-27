@@ -1,6 +1,6 @@
 <decoder name="qnap-qulog">
   <type>syslog</type>
-  <program_name type="pcre2">(?i)^(?:qnap-qulog|qnap|qts|quts|qulog|qulogcenter)$</program_name>
+  <program_name type="pcre2">(?i)^(?:qnap-qulog|qnap|qts|quts|qulogd?|qulogcenter)$</program_name>
 </decoder>
 
 <decoder name="qnap-qulog">
@@ -30,4 +30,16 @@
   <parent>qnap-qulog</parent>
   <regex type="pcre2">(?i)\b(?:user(?:name)?\s*[:=]\s*|user\s+\[)(?|"([^"]+)"|'([^']+)'|\[?([^\s\]",;']+))</regex>
   <order>dstuser</order>
+</decoder>
+
+<decoder name="qnap-qulog">
+  <parent>qnap-qulog</parent>
+  <regex type="pcre2">(?i)^\s*conn log:\s*Users:\s*(.+?),\s*Source IP:</regex>
+  <order>dstuser</order>
+</decoder>
+
+<decoder name="qnap-qulog">
+  <parent>qnap-qulog</parent>
+  <regex type="pcre2">(?i)^\s*conn log:.*?,\s*Computer name:\s*(.+?),\s*Connection type:\s*(.+?),\s*Accessed resources:\s*(.*),\s*Action:\s*([a-z][a-z0-9 _-]*?)\s*$</regex>
+  <order>qnap.client_host,qnap.connection_type,qnap.resource,qnap.action</order>
 </decoder>

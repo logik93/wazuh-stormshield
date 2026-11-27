@@ -1,6 +1,6 @@
 # QNAP QuLog Center
 
-Moduł analizuje anglojęzyczne komunikaty tekstowe przesłane przez syslog. Obejmuje logowania, błędy dysków i RAID, kopie, migawki, replikację oraz wybrane awarie sprzętu i zasilania. Dashboard pokazuje alerty zapisane przez Wazuh. Harmonogram i stan ostatniej kopii nadal można sprawdzić w aplikacji kopii zapasowych na NAS-ie.
+Moduł analizuje anglojęzyczne komunikaty tekstowe przesłane przez syslog. Obejmuje logowania i zmiany plików SMB, błędy dysków i RAID, kopie, migawki, replikację oraz wybrane awarie sprzętu i zasilania. Dashboard pokazuje alerty zapisane przez Wazuh. Harmonogram i stan ostatniej kopii nadal można sprawdzić w aplikacji kopii zapasowych na NAS-ie.
 
 ## Szybkie wdrożenie na wspólnym nasłuchu Wazuh
 
@@ -74,9 +74,9 @@ Dodaj ten plik do lokalnej rotacji logów rsyslog. Jeżeli rsyslog działa na od
 
 ## Sprawdzenie logów i dashboardu
 
-1. Wklej pełną linię sysloga do `sudo /var/ossec/bin/wazuh-logtest`. W fazie 2 oczekuj dekodera `qnap-qulog`. W fazie 3 komunikat pasujący do jednej z reguł otrzyma ID `110541–110546`. Zdarzenie ogólne otrzyma poziom 0.
+1. Wklej pełną linię sysloga do `sudo /var/ossec/bin/wazuh-logtest`. W fazie 2 oczekuj dekodera `qnap-qulog`. W fazie 3 komunikat pasujący do jednej z reguł otrzyma jedno z ID `110541–110546`, `110548` lub `110549`. Zdarzenie ogólne otrzyma poziom 0.
 2. W **Discover** wybierz zakres obejmujący nowe alerty i filtr `rule.groups: "qnap" AND rule.groups: "qulog"`. Jeśli nie widzisz wpisów, sprawdź rzeczywisty adres źródłowy, port, transport, listę `allowed-ips`, próg `log_alert_level` i zapis alertów w managerze.
-3. Zaimportuj [dashboard QNAP QuLog · Ochrona danych i dostęp](../dashboard/qnap-qulog.ndjson). Plik zawiera 13 obiektów. W tabeli **Źródła sysloga** sprawdź adres NAS-a w polu `location`. [Instrukcja importu](../dashboard/README.md)
+3. Zaimportuj [dashboard QNAP QuLog · Ochrona danych i dostęp](../dashboard/qnap-qulog.ndjson). Plik zawiera 17 obiektów. W tabeli **Źródła sysloga** sprawdź adres NAS-a w polu `location`. [Instrukcja importu](../dashboard/README.md)
 
 | ID reguły | Co pojawi się w dashboardzie |
 | --- | --- |
@@ -84,8 +84,16 @@ Dodaj ten plik do lokalnej rotacji logów rsyslog. Jeżeli rsyslog działa na od
 | `110543` | Problemy z dyskami, RAID lub woluminem |
 | `110544`, `110545` | Wynik kopii zapasowej, replikacji lub migawki |
 | `110546` | Przegrzanie, awarie sprzętu lub zasilania |
+| `110548` | Dodanie, zapis, zmiana nazwy lub przeniesienie przez SMB |
+| `110549` | Usunięcie przez SMB |
 
-Na syntetycznych komunikatach sprawdzono bezpośredni odbiór QNAP-a i Stormshielda na jednym porcie UDP w Wazuh 4.14.5. Osobno sprawdzono wariant z przekaźnikiem i `localfile`. Bezpośredni dekoder rozpoznaje nazwy programu QNAP, QTS, QuTS, QuLog lub QuLogCenter albo początek komunikatu `[QuLog Center]`. Dashboard sprawdzono w przeglądarce z testowym indeksem alertów. Format, język i treść komunikatów różnią się zależnie od wersji QTS, QuTS hero i aplikacji. Jeśli log z konkretnego urządzenia pozostaje nierozpoznany albo trafia tylko do reguły `110540`, przyda się zanonimizowana oryginalna linia sysloga z nagłówkiem i wersją firmware.
+Na syntetycznych komunikatach sprawdzono bezpośredni odbiór QNAP-a i Stormshielda na jednym porcie UDP w Wazuh 4.14.5. Osobno sprawdzono wariant z przekaźnikiem i `localfile`. Bezpośredni dekoder rozpoznaje nazwy programu QNAP, QTS, QuTS, QuLog, qulogd lub QuLogCenter albo początek komunikatu `[QuLog Center]`. Dashboard sprawdzono w przeglądarce z testowym indeksem alertów. Format, język i treść komunikatów różnią się zależnie od wersji QTS, QuTS hero i aplikacji. Jeśli log z konkretnego urządzenia pozostaje nierozpoznany albo trafia tylko do reguły `110540`, przyda się zanonimizowana oryginalna linia sysloga z nagłówkiem i wersją firmware.
+
+### Logi dostępu SMB z `qulogd`
+
+Komunikaty `conn log:` pokazują użytkownika, adres klienta, nazwę komputera, typ połączenia, ścieżkę zasobu i akcję. Dashboard pokazuje błędy logowania, dziennik zmian plików oraz licznik usunięć. `Read` pozostaje zdarzeniem poziomu 0, żeby zwykłe odczyty nie zapełniały indeksu alertów. Zdarzenia poziomu 0 można sprawdzić w archiwum Wazuh, jeśli archiwizacja jest włączona.
+
+Jeśli NAS wysyła tylko logi dostępu, panele kopii, dysków i zasilania poczekają na odpowiednie logi systemowe. Aktualizacja dekodera zaczyna działać dla nowych komunikatów. Wcześniejsze wpisy z `archives.json` nie pojawią się samoczynnie na dashboardzie alertów.
 
 ## Źródła i inspiracje
 

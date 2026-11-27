@@ -430,5 +430,95 @@
       "dstuser": "operator",
       "srcip": "192.0.2.40"
     }
+  },
+  {
+    "name": "QNAP qulogd: Login Fail",
+    "log": "Nov 27 14:13:23 nas-test qulogd[1234]: conn log: Users: TEST\\operator, Source IP: 192.0.2.10, Computer name: ---, Connection type: SAMBA, Accessed resources: Samba, Action: Login Fail",
+    "decoder": "qnap-qulog",
+    "rule": 110541,
+    "level": 6,
+    "fields": {
+      "dstuser": "TEST\\operator",
+      "srcip": "192.0.2.10",
+      "qnap.client_host": "---",
+      "qnap.connection_type": "SAMBA",
+      "qnap.resource": "Samba",
+      "qnap.action": "Login Fail"
+    }
+  },
+  {
+    "name": "QNAP qulogd: Login Success",
+    "log": "Nov 27 14:13:23 nas-test qulogd[1234]: conn log: Users: TEST\\operator, Source IP: 192.0.2.10, Computer name: ---, Connection type: SAMBA, Accessed resources: Samba, Action: Login Success",
+    "decoder": "qnap-qulog",
+    "rule": 110542,
+    "level": 3,
+    "fields": {
+      "dstuser": "TEST\\operator",
+      "srcip": "192.0.2.10",
+      "qnap.client_host": "---",
+      "qnap.connection_type": "SAMBA",
+      "qnap.resource": "Samba",
+      "qnap.action": "Login Success"
+    }
+  },
+  {
+    "name": "QNAP qulogd: Read",
+    "log": "Nov 27 14:13:23 nas-test qulogd[1234]: conn log: Users: TEST\\operator, Source IP: 192.0.2.10, Computer name: ---, Connection type: SAMBA, Accessed resources: Dane/backup failed, raport.txt, Action: Read",
+    "decoder": "qnap-qulog",
+    "rule": 110540,
+    "level": 0,
+    "fields": {
+      "dstuser": "TEST\\operator",
+      "srcip": "192.0.2.10",
+      "qnap.client_host": "---",
+      "qnap.connection_type": "SAMBA",
+      "qnap.resource": "Dane/backup failed, raport.txt",
+      "qnap.action": "Read"
+    }
+  },
+  {
+    "name": "QNAP qulogd: Add",
+    "log": "Nov 27 14:13:23 nas-test qulogd[1234]: conn log: Users: TEST\\operator, Source IP: 192.0.2.10, Computer name: ---, Connection type: SAMBA, Accessed resources: Dane/Umowy, rok 2026/Próbka.txt, Action: Add",
+    "decoder": "qnap-qulog",
+    "rule": 110548,
+    "level": 3,
+    "fields": {
+      "dstuser": "TEST\\operator",
+      "srcip": "192.0.2.10",
+      "qnap.client_host": "---",
+      "qnap.connection_type": "SAMBA",
+      "qnap.resource": "Dane/Umowy, rok 2026/Próbka.txt",
+      "qnap.action": "Add"
+    }
+  },
+  {
+    "name": "QNAP qulogd: Write",
+    "log": "Nov 27 14:13:23 nas-test qulogd[1234]: conn log: Users: TEST\\operator, Source IP: 192.0.2.10, Computer name: ---, Connection type: SAMBA, Accessed resources: Dane/Umowy, rok 2026/Próbka.txt, Action: Write",
+    "decoder": "qnap-qulog",
+    "rule": 110548,
+    "level": 3,
+    "fields": {
+      "dstuser": "TEST\\operator",
+      "srcip": "192.0.2.10",
+      "qnap.client_host": "---",
+      "qnap.connection_type": "SAMBA",
+      "qnap.resource": "Dane/Umowy, rok 2026/Próbka.txt",
+      "qnap.action": "Write"
+    }
+  },
+  {
+    "name": "QNAP qulogd: Delete",
+    "log": "Nov 27 14:13:23 nas-test qulogd[1234]: conn log: Users: TEST\\operator, Source IP: 192.0.2.10, Computer name: ---, Connection type: SAMBA, Accessed resources: Dane/Umowy, rok 2026/Action: test, Próbka.txt, Action: Delete",
+    "decoder": "qnap-qulog",
+    "rule": 110549,
+    "level": 5,
+    "fields": {
+      "dstuser": "TEST\\operator",
+      "srcip": "192.0.2.10",
+      "qnap.client_host": "---",
+      "qnap.connection_type": "SAMBA",
+      "qnap.resource": "Dane/Umowy, rok 2026/Action: test, Próbka.txt",
+      "qnap.action": "Delete"
+    }
   }
 ]
