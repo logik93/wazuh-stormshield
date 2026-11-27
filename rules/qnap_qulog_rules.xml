@@ -46,3 +46,13 @@
     <group>qnap_hardware,</group>
   </rule>
 </group>
+
+<group name="qnap,qnap_capacity,">
+  <rule id="110547" level="3">
+    <decoded_as>json</decoded_as>
+    <field name="integration" type="pcre2">^qnap_volume_capacity$</field>
+    <field name="qnap_capacity.volume" type="pcre2">\S</field>
+    <description>QNAP: pomiar pojemności woluminu</description>
+    <options>no_full_log</options>
+  </rule>
+</group>

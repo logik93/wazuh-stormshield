@@ -36,10 +36,10 @@ Jeśli syslog już działa, przejdź do kroku 4, a następnie zaimportuj dashboa
 
 ### Instalacja ręczna
 
-Na hoście managera, z katalogu repozytorium, sprawdź czy zakresy `110500–110509`, `110520–110523` i `110540–110546` są wolne w Twoim zestawie reguł. Jeżeli inny pakiet rozpoznaje te same komunikaty, wybierz jeden zestaw dekoderów i odpowiadających mu reguł. Przy aktualizacji zachowaj kopie zastępowanych plików XML oraz kopię `/var/ossec/etc/ossec.conf`.
+Na hoście managera, z katalogu repozytorium, sprawdź czy zakresy `110500–110509`, `110520–110523` i `110540–110547` są wolne w Twoim zestawie reguł. Jeżeli inny pakiet rozpoznaje te same komunikaty, wybierz jeden zestaw dekoderów i odpowiadających mu reguł. Przy aktualizacji zachowaj kopie zastępowanych plików XML oraz kopię `/var/ossec/etc/ossec.conf`.
 
 ```bash
-sudo grep -RE 'id="(11050[0-9]|11052[0-3]|11054[0-6])"' /var/ossec/etc/rules /var/ossec/ruleset/rules
+sudo grep -RE 'id="(11050[0-9]|11052[0-3]|11054[0-7])"' /var/ossec/etc/rules /var/ossec/ruleset/rules
 ```
 
 Uruchom bloki dla wybranych urządzeń.

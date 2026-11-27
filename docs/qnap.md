@@ -58,7 +58,7 @@ Dodaj ten plik do lokalnej rotacji logów rsyslog. Jeżeli rsyslog działa na od
 
 1. Wklej jedną linię z pliku do `sudo /var/ossec/bin/wazuh-logtest`. W fazie 2 oczekuj dekodera `qnap-qulog`. W fazie 3 komunikat pasujący do jednej z reguł otrzyma ID `110541–110546`. Zdarzenie ogólne otrzyma poziom 0.
 2. W **Discover** wybierz zakres obejmujący nowe alerty i filtr `rule.groups: "qnap" AND rule.groups: "qulog"`. Jeśli nie widzisz wpisów, sprawdź zawartość pliku, próg `log_alert_level` i zapis alertów w managerze.
-3. Zaimportuj [dashboard QNAP QuLog · Ochrona danych i dostęp](../dashboard/qnap-qulog.ndjson). Plik zawiera 13 obiektów. [Instrukcja importu](../dashboard/README.md)
+3. Zaimportuj [dashboard QNAP QuLog · Ochrona danych i dostęp](../dashboard/qnap-qulog.ndjson). Plik zawiera 14 obiektów. [Instrukcja importu](../dashboard/README.md)
 
 | ID reguły | Co pojawi się w dashboardzie |
 | --- | --- |
@@ -75,3 +75,45 @@ Na syntetycznych komunikatach sprawdzono odbiór UDP przez rsyslog, dekodowanie 
 - Widoki Synology porządkują zdarzenia NAS-a według dostępu i operacji na danych. Ten pakiet dostosowuje te obszary do tekstowych komunikatów QNAP. [phastier/wazuh](https://github.com/phastier/wazuh#synology-dsm-nas)
 - Integracja QNAP w Home Assistant rozdziela kondycję dysków, woluminów i samego urządzenia. Nasz dashboard pokazuje zarejestrowane alerty w tych obszarach. [Home Assistant · QNAP](https://github.com/home-assistant/core/tree/dev/homeassistant/components/qnap)
 - QuLog Center zawiera konfigurację wysyłki logów do sysloga. Nazewnictwo opcji zależy od wersji systemu. [Dokumentacja QTS](https://docs.qnap.com/operating-system/qts/5.2.x/en-us/)
+
+## Wolne miejsce na woluminach
+
+Panel **Wolne miejsce na woluminach** pokazuje ostatni odczyt każdego woluminu w wybranym okresie. Są w nim wolne miejsce, pojemność, procent wolnego i moment odczytu w UTC. Po braku nowych pomiarów sprawdź datę w tabeli i działanie kolektora. Dane dotyczą woluminów udostępnionych przez NAS-MIB, a pojemność puli może się różnić, zwłaszcza przy woluminach thin.
+
+### 1. Udostępnij pomiary przez SNMPv3
+
+Włącz SNMPv3 w ustawieniach NAS-a i skonfiguruj odczyt z uwierzytelnieniem i szyfrowaniem (`authPriv`). Ogranicz dostęp UDP 161 do adresu hosta zbierającego pomiary. Na tym hoście zainstaluj Python 3 i Net-SNMP z poleceniem `snmpwalk` (pakiet `snmp` na Debianie i Ubuntu). Kolektor używa liczników bajtowych z tabeli woluminów QNAP i sprawdza starszą tabelę bajtową, jeśli nowa nie dostarcza danych. [Definicje NAS-MIB](https://github.com/librenms/librenms/blob/master/mibs/qnap/NAS-MIB)
+
+Zapisz ustawienia SNMPv3 w prywatnym katalogu. Przykład dla harmonogramu użytkownika root wykorzystuje katalog `/root/.snmp-qnap` z prawami `0700` i plik `snmp.conf` z prawami `0600`. W pliku skonfiguruj opcje Net-SNMP `defSecurityName`, `defAuthType`, `defPrivType`, `defAuthPassphrase` i `defPrivPassphrase` zgodnie z ustawieniami NAS-a. Hasła wpisz bezpośrednio do tego pliku. Dla osobnych poświadczeń użyj osobnego katalogu na NAS. [Opcje snmp.conf](https://github.com/net-snmp/net-snmp/blob/master/man/snmp.conf.5.def)
+
+Z katalogu repozytorium uruchom próbny odczyt. Podmień adres i nazwę przykładową. Wynik powinien zawierać jeden obiekt JSON na wolumin.
+
+```bash
+sudo python3 scripts/qnap-volumes.py 192.0.2.50 \
+  --device NAS1 --snmp-config-dir /root/.snmp-qnap
+```
+
+### 2. Zapisuj odczyty i przekaż je do Wazuh
+
+Zaktualizuj moduł QNAP przez `sudo ./install.sh` i wybierz **4) QNAP QuLog Center**. Następnie przygotuj plik odczytów, jeżeli jeszcze nie istnieje:
+
+```bash
+sudo sh -c 'umask 077; touch /var/log/wazuh-qnap-volumes.jsonl'
+```
+
+W `/var/ossec/etc/ossec.conf` dodaj w istniejącym `<ossec_config>`:
+
+```xml
+<localfile>
+  <location>/var/log/wazuh-qnap-volumes.jsonl</location>
+  <log_format>json</log_format>
+</localfile>
+```
+
+Po kontroli przez `sudo /var/ossec/bin/wazuh-logcollector -t` zrestartuj managera. W crontabie użytkownika, który ma dostęp do konfiguracji SNMP i pliku wynikowego, dodaj np. poniższy wpis. Podstaw rzeczywistą ścieżkę do repozytorium. Dodaj ten plik do rotacji logów.
+
+```cron
+*/15 * * * * /usr/bin/python3 /opt/wazuh-stormshield/scripts/qnap-volumes.py 192.0.2.50 --device NAS1 --snmp-config-dir /root/.snmp-qnap >> /var/log/wazuh-qnap-volumes.jsonl
+```
+
+Zaimportuj zaktualizowany [dashboard QNAP](../dashboard/qnap-qulog.ndjson) z opcją **Overwrite**. Przy pierwszym uruchomieniu ustaw okres obejmujący pomiar i potwierdź w **Discover**, że pojawiła się reguła `110547`. Pomiar ma poziom 3, więc indeksacja wymaga odpowiedniego progu `log_alert_level`. Dane o pojemności trafiają do panelu pojemności. Liczniki zdarzeń QuLog pozostają oparte na logach zdarzeń.

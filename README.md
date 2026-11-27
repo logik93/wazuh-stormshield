@@ -6,7 +6,7 @@ Dekodery i reguły dla managera Wazuh. Stormshield SNS wysyła komunikaty WELF p
 | --- | --- | --- |
 | Stormshield SNS | Ruch i NAT, alarmy, uwierzytelnianie, VPN, audyt administracyjny, system i inne rodziny WELF | Blokady ruchu, alarmy, nieudane uwierzytelnienia i VPN, wybrane polecenia konfiguracji, powtarzające się blokady i błędy logowania |
 | MikroTik RouterOS 7 | Blokady z prefiksem `WAZUH-DROP`, logowania i wylogowania, przydzielenie i zwolnienie dzierżawy IPv4 | Blokady ruchu, błędy logowania, przydzielenie dzierżawy |
-| QNAP QuLog Center | Dostęp do NAS-a, dyski i RAID, kopie, replikacja, migawki, sprzęt i zasilanie | Wynik logowania i ochrony danych oraz problemy z pamięcią masową lub sprzętem |
+| QNAP QuLog Center | Dostęp do NAS-a, dyski i RAID, kopie, replikacja, migawki, sprzęt i zasilanie oraz pomiary woluminów przez SNMPv3 | Wynik logowania i ochrony danych oraz problemy z pamięcią masową lub sprzętem |
 
 Dla Fortinet FortiGate, Cisco ASA, pfSense i Palo Alto skorzystaj z dekoderów dostarczanych z Wazuh. W przypadku FortiGate wysyłaj natywny format `key=value`. Dobierz format pozostałych urządzeń na podstawie dekoderów zainstalowanej wersji i potwierdź dopasowanie w `wazuh-logtest`.
 

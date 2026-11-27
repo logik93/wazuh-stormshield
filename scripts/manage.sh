@@ -73,7 +73,7 @@ if [[ $action == install ]]; then
         elif [[ $module == mikrotik_routeros ]]; then
             ids='11052[0-3]'
         else
-            ids='11054[0-6]'
+            ids='11054[0-7]'
         fi
         for file in "$manager/etc/rules"/**/*.xml "$manager/ruleset/rules"/**/*.xml; do
             [[ $file != "$manager/etc/rules/${module}_rules.xml" ]] || continue

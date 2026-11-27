@@ -392,5 +392,19 @@
     "rule": null,
     "level": null,
     "fields": {}
+  },
+  {
+    "name": "QNAP: pomiar pojemności przez JSON",
+    "log": "{\"integration\":\"qnap_volume_capacity\",\"qnap_capacity\":{\"volume\":\"nas-test / Dane [#1]\",\"total\":\"4.00 TiB\",\"free\":\"512.00 GiB\",\"free_percent\":\"12.5%\",\"measured_at\":\"2026-11-27 10:00:00 UTC\"}}",
+    "decoder": "json",
+    "rule": 110547,
+    "level": 3,
+    "fields": {
+      "qnap_capacity.volume": "nas-test / Dane [#1]",
+      "qnap_capacity.total": "4.00 TiB",
+      "qnap_capacity.free": "512.00 GiB",
+      "qnap_capacity.free_percent": "12.5%",
+      "qnap_capacity.measured_at": "2026-11-27 10:00:00 UTC"
+    }
   }
 ]
