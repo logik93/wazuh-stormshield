@@ -406,5 +406,29 @@
       "qnap_capacity.free_percent": "12.5%",
       "qnap_capacity.measured_at": "2026-11-27 10:00:00 UTC"
     }
+  },
+  {
+    "name": "QNAP: syslog bezpośredni, program QTS",
+    "log": "Feb 10 17:00:00 nas-test QTS: [Users] Failed to log in. User: \"operator\", Source IP: 192.0.2.40.",
+    "decoder": "qnap-qulog",
+    "rule": 110541,
+    "level": 6,
+    "fields": {
+      "qnap.component": "Users",
+      "dstuser": "operator",
+      "srcip": "192.0.2.40"
+    }
+  },
+  {
+    "name": "QNAP: syslog bezpośredni, prefiks QuLog Center",
+    "log": "Feb 10 17:00:00 nas-test [QuLog Center] Notification: [Users] Failed to log in. User: \"operator\", Source IP: 192.0.2.40.",
+    "decoder": "qnap-qulog",
+    "rule": 110541,
+    "level": 6,
+    "fields": {
+      "qnap.component": "Users",
+      "dstuser": "operator",
+      "srcip": "192.0.2.40"
+    }
   }
 ]

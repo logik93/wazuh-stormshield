@@ -54,13 +54,13 @@ Moduł rozpoznaje komunikaty zapory z prefiksem `WAZUH-DROP`, logowania i wylogo
 
 ## QNAP QuLog Center
 
-Moduł rozpoznaje komunikaty ze znacznikiem sysloga `qnap-qulog`. Odczytuje treść wpisu, komponent oraz użytkownika i adres klienta, gdy występują w obsługiwanym zapisie. Szczegóły reguł i odbioru logów są w [instrukcji QNAP](qnap.md).
+Moduł rozpoznaje nagłówki QNAP i QuLog Center oraz znacznik `qnap-qulog` używany przez przekaźnik. Odczytuje treść wpisu, komponent oraz użytkownika i adres klienta, gdy występują w obsługiwanym zapisie. Szczegóły reguł i odbioru logów są w [instrukcji QNAP](qnap.md).
 
 ## Testy
 
 Uruchom `python3 tests/run.py` z katalogu repozytorium. Skrypt montuje repozytorium do tymczasowego kontenera tylko do odczytu. W kontenerze najpierw sprawdza konfigurację przez `wazuh-analysisd -t`, następnie uruchamia analizę i przekazuje próbki do `wazuh-logtest`. Sprawdza nazwę dekodera, pola, ID reguły i poziom. Scenariusze korelacji działają we wspólnej sesji i sprawdzają, czy zmiana IP lub urządzenia uniemożliwia przedwczesny alert. Nie potrzeba managera produkcyjnego, indeksatora ani fizycznej zapory.
 
-Na Wazuh 4.14.5 przeszły 53 przypadki syntetyczne. Dodatkowo odtworzono 48 publicznych logów z zestawów Elastic podlinkowanych przez serytia. Wszystkie dopasowały dekoder SNS i zachowały oczekiwane `logtype`. Dwa syntetyczne zdarzenia wysłane przez UDP do lokalnego nasłuchu Wazuh dotarły do `alerts.json` z regułami 110501 i 110523.
+Na Wazuh 4.14.5 przeszło 55 przypadków syntetycznych. Dodatkowo odtworzono 48 publicznych logów z zestawów Elastic podlinkowanych przez serytia. Wszystkie dopasowały dekoder SNS i zachowały oczekiwane `logtype`. Dwa syntetyczne zdarzenia wysłane przez UDP do lokalnego nasłuchu Wazuh dotarły do `alerts.json` z regułami 110501 i 110523.
 
 Format eksportu i pokrycie zdarzeń na konkretnych urządzeniach należy potwierdzić na ich logach. [Zbieranie próbek SNS](probki-sns.md)
 

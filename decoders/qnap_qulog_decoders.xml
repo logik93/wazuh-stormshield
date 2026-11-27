@@ -1,6 +1,11 @@
 <decoder name="qnap-qulog">
   <type>syslog</type>
-  <program_name type="pcre2">^qnap-qulog$</program_name>
+  <program_name type="pcre2">(?i)^(?:qnap-qulog|qnap|qts|quts|qulog|qulogcenter)$</program_name>
+</decoder>
+
+<decoder name="qnap-qulog">
+  <type>syslog</type>
+  <prematch type="pcre2">^\s*\[QuLog Center\](?:\s|$)</prematch>
 </decoder>
 
 <decoder name="qnap-qulog">

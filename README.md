@@ -1,6 +1,6 @@
 # Wazuh · Stormshield SNS, MikroTik RouterOS i QNAP
 
-Dekodery i reguły dla managera Wazuh. Stormshield SNS wysyła komunikaty WELF przez syslog. Moduł RouterOS obsługuje zdarzenia zapory, logowania i dzierżawy DHCP w formacie BSD syslog. Moduł QNAP analizuje logi QuLog Center przekazane przez rsyslog.
+Dekodery i reguły dla managera Wazuh. Stormshield SNS wysyła komunikaty WELF przez syslog. Moduł RouterOS obsługuje zdarzenia zapory, logowania i dzierżawy DHCP w formacie BSD syslog. Moduł QNAP analizuje logi QuLog Center przesyłane do nasłuchu syslog Wazuh.
 
 | Moduł | Dekodowane zdarzenia | Alerty |
 | --- | --- | --- |

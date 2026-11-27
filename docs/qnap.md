@@ -2,31 +2,31 @@
 
 Moduł analizuje anglojęzyczne komunikaty tekstowe przesłane przez syslog. Obejmuje logowania, błędy dysków i RAID, kopie, migawki, replikację oraz wybrane awarie sprzętu i zasilania. Dashboard pokazuje alerty zapisane przez Wazuh. Harmonogram i stan ostatniej kopii nadal można sprawdzić w aplikacji kopii zapasowych na NAS-ie.
 
-## Szybkie wdrożenie z kreatorem
+## Szybkie wdrożenie na wspólnym nasłuchu Wazuh
 
-Na linuksowym managerze Wazuh z systemd, z katalogu repozytorium:
+Potrzebujesz managera Wazuh z istniejącym nasłuchem `<remote>` o typie `syslog`, np. tym, z którego korzysta Stormshield. Na hoście managera:
 
 ```bash
 sudo ./install.sh
 ```
 
 1. Wybierz **4) QNAP QuLog Center** i potwierdź instalację.
-2. Gdy instalator zapyta o odbiór sysloga, naciśnij Enter. Podaj adres IP NAS-a i zatwierdź port UDP (domyślnie `5515`).
-3. Potwierdź ustawienia. Kreator skonfiguruje rsyslog i odczyt pliku przez Wazuh, sprawdzi składnię i zrestartuje obie usługi. Na Debianie lub Ubuntu może doinstalować rsyslog przez `apt-get`, jeśli go brakuje. Poprzednie pliki zachowa w katalogu kopii, którego ścieżkę wyświetli.
-4. Skopiuj wyświetlony adres odbiornika i port do **QuLog Center → Log Sender** na QNAP-ie. Wybierz UDP oraz logi zdarzeń i dostępu. Jeśli host ma zaporę, dopuść wybrany port z adresu NAS-a.
-5. Po pierwszym wpisie w `/var/log/wazuh-qnap.log` przejdź do [weryfikacji alertów](#3-sprawdź-log-i-dashboard).
+2. Gdy instalator zapyta o odbiór sysloga, naciśnij Enter. Jeśli manager ma kilka nasłuchów syslog, wybierz nasłuch Stormshielda. Podaj adres IP, z którego QNAP wysyła logi.
+3. Po potwierdzeniu kreator dopisze adres QNAP-a do istniejących wpisów `allowed-ips`, sprawdzi konfigurację i zrestartuje managera. W razie błędu przywróci kopię `ossec.conf`.
+4. W **QuLog Center → Log Sender** na QNAP-ie ustaw ten sam adres, port i transport co na Stormshieldzie. Wybierz logi zdarzeń i dostępu. Jeśli host ma zaporę, dopuść ruch z adresu NAS-a na używany port.
+5. Przejdź do [weryfikacji alertów](#sprawdzenie-logów-i-dashboardu).
 
-Aby uruchomić kreator osobno po instalacji modułu albo zmienić adres NAS-a lub port, użyj:
+Jeśli moduł jest już zainstalowany i zaktualizowany, możesz uruchomić kreator osobno:
 
 ```bash
 sudo ./configure-qnap.sh
 ```
 
-Kreator wymaga Python 3 i ustawia jeden adres NAS-a. Podczas ponownej konfiguracji podpowiada poprzednie wartości. Gdy walidacja lub restart usługi nie przejdą, przywraca pliki sprzed konfiguracji.
+Przy ręcznej konfiguracji można dopisać ten sam wpis `<allowed-ips>ADRES_QNAP</allowed-ips>` bezpośrednio do bloku syslog używanego przez Stormshield. [Konfiguracja nasłuchu syslog Wazuh](instalacja.md#2-włącz-odbiór-sysloga)
 
-## Konfiguracja ręczna
+## Opcjonalny przekaźnik rsyslog
 
-Jeżeli używasz kreatora, możesz przejść do weryfikacji po ustawieniu celu na NAS-ie. Przy konfiguracji ręcznej w QTS lub QuTS hero otwórz **QuLog Center → Log Sender** i dodaj cel syslog. Wybierz logi zdarzeń i dostępu, jeśli są dostępne dla danego firmware. W przykładzie serwer rsyslog działa na hoście managera Wazuh. Skonfiguruj NAS do wysyłania na jego adres przez **UDP 5515**. Ogranicz ten port do adresów NAS-ów w sieci zarządzającej.
+Jeśli istniejąca instalacja korzysta z przekaźnika, dekoder obsługuje także znacznik `qnap-qulog`. Przekaźnik można zastosować do komunikatów QNAP bez rozpoznawalnego nagłówka. W QTS lub QuTS hero otwórz **QuLog Center → Log Sender** i dodaj cel syslog. Wybierz logi zdarzeń i dostępu, jeśli są dostępne dla danego firmware. W przykładzie serwer rsyslog działa na hoście managera Wazuh. Skonfiguruj NAS do wysyłania na jego adres przez **UDP 5515**. Ogranicz ten port do adresów NAS-ów w sieci zarządzającej.
 
 Poniżej przykładowy plik `/etc/rsyslog.d/35-wazuh-qnap.conf`. Podmień `192.0.2.50` na rzeczywisty adres NAS-a widoczny dla odbiornika. Jeśli masz już załadowany `imudp`, pomiń pierwszą linię. Wybierz wolny port i ustaw go także na NAS-ie. Konfiguracja zapisuje osobny plik i dodaje znacznik `qnap-qulog`, którego dekoder używa do rozpoznawania komunikatów.
 
@@ -72,10 +72,10 @@ sudo systemctl restart wazuh-manager
 
 Dodaj ten plik do lokalnej rotacji logów rsyslog. Jeżeli rsyslog działa na oddzielnym hoście, ten sam blok `localfile` może czytać lokalny agent Wazuh na przekaźniku.
 
-## 3. Sprawdź log i dashboard
+## Sprawdzenie logów i dashboardu
 
-1. Wklej jedną linię z pliku do `sudo /var/ossec/bin/wazuh-logtest`. W fazie 2 oczekuj dekodera `qnap-qulog`. W fazie 3 komunikat pasujący do jednej z reguł otrzyma ID `110541–110546`. Zdarzenie ogólne otrzyma poziom 0.
-2. W **Discover** wybierz zakres obejmujący nowe alerty i filtr `rule.groups: "qnap" AND rule.groups: "qulog"`. Jeśli nie widzisz wpisów, sprawdź zawartość pliku, próg `log_alert_level` i zapis alertów w managerze.
+1. Wklej pełną linię sysloga do `sudo /var/ossec/bin/wazuh-logtest`. W fazie 2 oczekuj dekodera `qnap-qulog`. W fazie 3 komunikat pasujący do jednej z reguł otrzyma ID `110541–110546`. Zdarzenie ogólne otrzyma poziom 0.
+2. W **Discover** wybierz zakres obejmujący nowe alerty i filtr `rule.groups: "qnap" AND rule.groups: "qulog"`. Jeśli nie widzisz wpisów, sprawdź rzeczywisty adres źródłowy, port, transport, listę `allowed-ips`, próg `log_alert_level` i zapis alertów w managerze.
 3. Zaimportuj [dashboard QNAP QuLog · Ochrona danych i dostęp](../dashboard/qnap-qulog.ndjson). Plik zawiera 14 obiektów. [Instrukcja importu](../dashboard/README.md)
 
 | ID reguły | Co pojawi się w dashboardzie |
@@ -85,7 +85,7 @@ Dodaj ten plik do lokalnej rotacji logów rsyslog. Jeżeli rsyslog działa na od
 | `110544`, `110545` | Wynik kopii zapasowej, replikacji lub migawki |
 | `110546` | Przegrzanie, awarie sprzętu lub zasilania |
 
-Na syntetycznych komunikatach sprawdzono odbiór UDP przez rsyslog, dekodowanie oraz zapis alertu przez `localfile` w Wazuh 4.14.5. Dashboard sprawdzono w przeglądarce z testowym indeksem alertów. Format, język i treść komunikatów różnią się zależnie od wersji QTS, QuTS hero i aplikacji. Jeżeli komunikat z konkretnego urządzenia trafia tylko do reguły `110540`, przyda się zanonimizowana pełna linia z pliku odbiornika oraz wersja NAS-a.
+Na syntetycznych komunikatach sprawdzono bezpośredni odbiór QNAP-a i Stormshielda na jednym porcie UDP w Wazuh 4.14.5. Osobno sprawdzono wariant z przekaźnikiem i `localfile`. Bezpośredni dekoder rozpoznaje nazwy programu QNAP, QTS, QuTS, QuLog lub QuLogCenter albo początek komunikatu `[QuLog Center]`. Dashboard sprawdzono w przeglądarce z testowym indeksem alertów. Format, język i treść komunikatów różnią się zależnie od wersji QTS, QuTS hero i aplikacji. Jeśli log z konkretnego urządzenia pozostaje nierozpoznany albo trafia tylko do reguły `110540`, przyda się zanonimizowana oryginalna linia sysloga z nagłówkiem i wersją firmware.
 
 ## Źródła i inspiracje
 
