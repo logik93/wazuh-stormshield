@@ -76,7 +76,7 @@ Dodaj ten plik do lokalnej rotacji logów rsyslog. Jeżeli rsyslog działa na od
 
 1. Wklej pełną linię sysloga do `sudo /var/ossec/bin/wazuh-logtest`. W fazie 2 oczekuj dekodera `qnap-qulog`. W fazie 3 komunikat pasujący do jednej z reguł otrzyma ID `110541–110546`. Zdarzenie ogólne otrzyma poziom 0.
 2. W **Discover** wybierz zakres obejmujący nowe alerty i filtr `rule.groups: "qnap" AND rule.groups: "qulog"`. Jeśli nie widzisz wpisów, sprawdź rzeczywisty adres źródłowy, port, transport, listę `allowed-ips`, próg `log_alert_level` i zapis alertów w managerze.
-3. Zaimportuj [dashboard QNAP QuLog · Ochrona danych i dostęp](../dashboard/qnap-qulog.ndjson). Plik zawiera 14 obiektów. [Instrukcja importu](../dashboard/README.md)
+3. Zaimportuj [dashboard QNAP QuLog · Ochrona danych i dostęp](../dashboard/qnap-qulog.ndjson). Plik zawiera 13 obiektów. W tabeli **Źródła sysloga** sprawdź adres NAS-a w polu `location`. [Instrukcja importu](../dashboard/README.md)
 
 | ID reguły | Co pojawi się w dashboardzie |
 | --- | --- |
@@ -134,4 +134,4 @@ Po kontroli przez `sudo /var/ossec/bin/wazuh-logcollector -t` zrestartuj manager
 */15 * * * * /usr/bin/python3 /opt/wazuh-stormshield/scripts/qnap-volumes.py 192.0.2.50 --device NAS1 --snmp-config-dir /root/.snmp-qnap >> /var/log/wazuh-qnap-volumes.jsonl
 ```
 
-Zaimportuj zaktualizowany [dashboard QNAP](../dashboard/qnap-qulog.ndjson) z opcją **Overwrite**. Przy pierwszym uruchomieniu ustaw okres obejmujący pomiar i potwierdź w **Discover**, że pojawiła się reguła `110547`. Pomiar ma poziom 3, więc indeksacja wymaga odpowiedniego progu `log_alert_level`. Dane o pojemności trafiają do panelu pojemności. Liczniki zdarzeń QuLog pozostają oparte na logach zdarzeń.
+Zaimportuj opcjonalny [panel pojemności](../dashboard/qnap-volumes-snmp.ndjson) z opcją **Overwrite**. W trybie edycji dashboardu wybierz **Add from library** i dodaj **QNAP QuLog · Wolne miejsce na woluminach**. Przy pierwszym uruchomieniu ustaw okres obejmujący pomiar i potwierdź w **Discover**, że pojawiła się reguła `110547`. Pomiar ma poziom 3, więc indeksacja wymaga odpowiedniego progu `log_alert_level`. Dane o pojemności trafiają do panelu pojemności. Liczniki zdarzeń QuLog pozostają oparte na logach zdarzeń.

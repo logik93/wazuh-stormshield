@@ -182,7 +182,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
-    update_file("qnap-qulog.ndjson", {"logik93-qnap-qulog-volume-capacity": qnap_capacity()}, check=args.check)
+    update_file("qnap-volumes-snmp.ndjson", {"logik93-qnap-qulog-volume-capacity": qnap_capacity()}, check=args.check)
     update_file("mikrotik-routeros.ndjson", {
         "logik93-mikrotik-routeros-interfaces": mikrotik_table(
             110521, "input_interface", "Interfejs", "Brak blokad z odczytanym interfejsem wejściowym.",

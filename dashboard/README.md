@@ -6,9 +6,9 @@ Każde urządzenie ma własny dashboard i plik importu.
 | --- | --- | ---: |
 | [Stormshield SNS · Monitorowanie](stormshield-sns.ndjson) | Blokady, alarmy, VPN, logowania i techniki MITRE | 16 |
 | [MikroTik RouterOS · Ruch i dostęp](mikrotik-routeros.ndjson) | Źródła, cele, porty i interfejsy blokad, metody logowania oraz klienci DHCP | 13 |
-| [QNAP QuLog · Ochrona danych i dostęp](qnap-qulog.ndjson) | Dostęp do NAS-a, wynik kopii i migawek oraz alerty o dyskach, RAID, sprzęcie i zasilaniu oraz wolne miejsce na woluminach | 14 |
+| [QNAP QuLog · Ochrona danych i dostęp](qnap-qulog.ndjson) | Nadawcy sysloga, dostęp do NAS-a, wynik kopii i migawek oraz alerty o dyskach, RAID, sprzęcie i zasilaniu | 13 |
 
-W każdym dashboardzie ustaw przedział czasu i rozwiń wpis w panelu **Ostatnie alerty**. Jeżeli urządzenie nie zarejestrowało danego zdarzenia w wybranym czasie, odpowiedni licznik pokaże zero, a tabela może być pusta. Dla QNAP-a najpierw [skonfiguruj odbiór logów QuLog](../docs/qnap.md) oraz opcjonalnie [dodaj pomiary woluminów przez SNMPv3](../docs/qnap.md#wolne-miejsce-na-woluminach).
+W każdym dashboardzie ustaw przedział czasu i rozwiń wpis w panelu **Ostatnie alerty**. Jeżeli urządzenie nie zarejestrowało danego zdarzenia w wybranym czasie, odpowiedni licznik pokaże zero, a tabela może być pusta. Dla QNAP-a najpierw [skonfiguruj odbiór logów QuLog](../docs/qnap.md).
 
 **Stormshield SNS · Monitorowanie** pokazuje alerty z indeksów `wazuh-alerts-*`. Jeden plik NDJSON zawiera dashboard i wszystkie 15 paneli. Liczniki i wykres pokazują sytuację w wybranym czasie. Dziennik ostatnich alertów zawiera opis i adresy, a tabele pokazują, czego dotyczyły blokady i jak zapora zareagowała na alarmy.
 
@@ -26,6 +26,12 @@ Jeżeli w **Visualize** widzisz sześć angielskich pozycji zaczynających się 
 2. Wybierz plik NDJSON dla swojego urządzenia. Przy pierwszym imporcie możesz zostawić opcję nadpisywania wyłączoną. Włącz ją przy aktualizacji tego samego dashboardu.
 3. Plik odwołuje się do standardowego wzorca indeksu `wazuh-alerts-*`. Jeśli importer zgłosi brakującą referencję, wskaż istniejący wzorzec alertów Wazuh z polem czasu `timestamp`. Jeżeli Twoja wersja importera nie pozwala przypisać referencji, odczytaj ID wzorca w **Index Patterns** i zmień w pliku wartości `"id":"wazuh-alerts-*"` w referencjach typu `index-pattern`.
 4. Otwórz wybrany dashboard w **Dashboards** i ustaw zakres czasu, np. **Last 24 hours**.
+
+## Sprawdzenie źródła logów QNAP
+
+W **Ostatnich alertach** i **Źródłach sysloga** pole `location` pokazuje adres nadawcy przy odbiorze bezpośrednim przez Wazuh. W logach ze starszego przekaźnika pole może zawierać ścieżkę do pliku. Kolumna `data.srcip` opisuje klienta z komunikatu, np. IP osoby logującej się do NAS-a. Aby przefiltrować dashboard do konkretnego NAS-a, wybierz w **Add filter** pole `location`.
+
+Domyślny dashboard jest przeznaczony do logów QuLog. Osobny [panel pojemności](qnap-volumes-snmp.ndjson) można dołączyć w instalacji, która zbiera [pomiary SNMPv3](../docs/qnap.md#wolne-miejsce-na-woluminach).
 
 ## Brak danych na dashboardzie MikroTik
 
