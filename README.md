@@ -19,7 +19,7 @@ Dla Fortinet FortiGate, Cisco ASA, pfSense i Palo Alto skorzystaj z dekoderów d
 
 ## Instalacja na Linuksie
 
-Na hoście managera Wazuh uruchom `sudo ./install.sh` i wybierz moduły. Aby je usunąć, uruchom `sudo ./uninstall.sh`. [Instrukcja konfiguracji, migracji i testu po wdrożeniu](docs/instalacja.md)
+Na hoście managera Wazuh uruchom `sudo ./install.sh` i wybierz moduły. Po instalacji QNAP możesz od razu uruchomić kreator odbioru sysloga. Aby je usunąć, uruchom `sudo ./uninstall.sh`. [Instrukcja konfiguracji, migracji i testu po wdrożeniu](docs/instalacja.md)
 
 ## Szybki test
 

@@ -63,7 +63,7 @@ Jeśli manager działa w kontenerze, umieść pliki w odpowiednich trwałych kat
 
 ## 2. Włącz odbiór sysloga
 
-Jeśli instalujesz QNAP, użyj [dedykowanej konfiguracji rsyslog i localfile](qnap.md). Dla Stormshielda i MikroTika wykonaj poniższe kroki.
+Po instalacji QNAP przyjmij propozycję uruchomienia kreatora albo uruchom `sudo ./configure-qnap.sh` osobno. [Kreator odbioru sysloga QNAP](qnap.md#szybkie-wdrożenie-z-kreatorem) Dla Stormshielda i MikroTika wykonaj poniższe kroki.
 
 Wewnątrz istniejącego `<ossec_config>` w `/var/ossec/etc/ossec.conf` dodaj blok albo uzupełnij istniejący nasłuch sysloga na tym porcie. Podmień przykładowe adresy na adresy nadawców widoczne z managera. Dodaj tylko wpisy dla używanych nadawców.
 

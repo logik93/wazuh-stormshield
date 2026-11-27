@@ -140,3 +140,14 @@ systemctl restart "$service"
 systemctl is-active --quiet "$service"
 trap - EXIT INT TERM
 printf 'Gotowe. Kopia plików sprzed operacji: %s\n' "$backup"
+
+if [[ $action == install && ( $choice == 4 || $choice == 5 ) && -t 0 ]]; then
+    read -r -p 'Skonfigurować teraz odbiór sysloga QNAP? [T/n]: ' configure_answer || exit 0
+    case "${configure_answer,,}" in
+        ''|t|tak)
+            flock -u 9
+            exec 9>&-
+            exec "$project/configure-qnap.sh"
+            ;;
+    esac
+fi

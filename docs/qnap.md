@@ -2,13 +2,31 @@
 
 Moduł analizuje anglojęzyczne komunikaty tekstowe przesłane przez syslog. Obejmuje logowania, błędy dysków i RAID, kopie, migawki, replikację oraz wybrane awarie sprzętu i zasilania. Dashboard pokazuje alerty zapisane przez Wazuh. Harmonogram i stan ostatniej kopii nadal można sprawdzić w aplikacji kopii zapasowych na NAS-ie.
 
-## 1. Zainstaluj moduł na managerze
+## Szybkie wdrożenie z kreatorem
 
-Z katalogu repozytorium uruchom `sudo ./install.sh` i wybierz **4) QNAP QuLog Center**. Instalator ładuje pliki XML i sprawdza konfigurację. Polecenia ręczne oraz sposób wycofania zmian są w [instrukcji instalacji](instalacja.md).
+Na linuksowym managerze Wazuh z systemd, z katalogu repozytorium:
 
-## 2. Przekaż logi z QuLog Center
+```bash
+sudo ./install.sh
+```
 
-W QTS lub QuTS hero otwórz **QuLog Center → Log Sender** i dodaj cel syslog. Wybierz logi zdarzeń i dostępu, jeśli są dostępne dla danego firmware. W przykładzie serwer rsyslog działa na hoście managera Wazuh. Skonfiguruj NAS do wysyłania na jego adres przez **UDP 5515**. Ogranicz ten port do adresów NAS-ów w sieci zarządzającej.
+1. Wybierz **4) QNAP QuLog Center** i potwierdź instalację.
+2. Gdy instalator zapyta o odbiór sysloga, naciśnij Enter. Podaj adres IP NAS-a i zatwierdź port UDP (domyślnie `5515`).
+3. Potwierdź ustawienia. Kreator skonfiguruje rsyslog i odczyt pliku przez Wazuh, sprawdzi składnię i zrestartuje obie usługi. Na Debianie lub Ubuntu może doinstalować rsyslog przez `apt-get`, jeśli go brakuje. Poprzednie pliki zachowa w katalogu kopii, którego ścieżkę wyświetli.
+4. Skopiuj wyświetlony adres odbiornika i port do **QuLog Center → Log Sender** na QNAP-ie. Wybierz UDP oraz logi zdarzeń i dostępu. Jeśli host ma zaporę, dopuść wybrany port z adresu NAS-a.
+5. Po pierwszym wpisie w `/var/log/wazuh-qnap.log` przejdź do [weryfikacji alertów](#3-sprawdź-log-i-dashboard).
+
+Aby uruchomić kreator osobno po instalacji modułu albo zmienić adres NAS-a lub port, użyj:
+
+```bash
+sudo ./configure-qnap.sh
+```
+
+Kreator wymaga Python 3 i ustawia jeden adres NAS-a. Podczas ponownej konfiguracji podpowiada poprzednie wartości. Gdy walidacja lub restart usługi nie przejdą, przywraca pliki sprzed konfiguracji.
+
+## Konfiguracja ręczna
+
+Jeżeli używasz kreatora, możesz przejść do weryfikacji po ustawieniu celu na NAS-ie. Przy konfiguracji ręcznej w QTS lub QuTS hero otwórz **QuLog Center → Log Sender** i dodaj cel syslog. Wybierz logi zdarzeń i dostępu, jeśli są dostępne dla danego firmware. W przykładzie serwer rsyslog działa na hoście managera Wazuh. Skonfiguruj NAS do wysyłania na jego adres przez **UDP 5515**. Ogranicz ten port do adresów NAS-ów w sieci zarządzającej.
 
 Poniżej przykładowy plik `/etc/rsyslog.d/35-wazuh-qnap.conf`. Podmień `192.0.2.50` na rzeczywisty adres NAS-a widoczny dla odbiornika. Jeśli masz już załadowany `imudp`, pomiń pierwszą linię. Wybierz wolny port i ustaw go także na NAS-ie. Konfiguracja zapisuje osobny plik i dodaje znacznik `qnap-qulog`, którego dekoder używa do rozpoznawania komunikatów.
 
