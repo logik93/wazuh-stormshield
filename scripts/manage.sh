@@ -25,14 +25,16 @@ if [[ $action == install ]]; then
 else
     printf 'Odinstalowanie integracji Wazuh\n'
 fi
-printf '1) Stormshield SNS\n2) MikroTik RouterOS\n3) Oba moduły\n0) Anuluj\n'
-read -r -p 'Wybierz moduły [0–3]: ' choice || exit 0
+printf '1) Stormshield SNS\n2) MikroTik RouterOS\n3) Stormshield i MikroTik\n4) QNAP QuLog Center\n5) Wszystkie moduły\n0) Anuluj\n'
+read -r -p 'Wybierz moduły [0–5]: ' choice || exit 0
 case $choice in
     1) modules=(stormshield_sns) ;;
     2) modules=(mikrotik_routeros) ;;
     3) modules=(stormshield_sns mikrotik_routeros) ;;
+    4) modules=(qnap_qulog) ;;
+    5) modules=(stormshield_sns mikrotik_routeros qnap_qulog) ;;
     0|'') exit 0 ;;
-    *) fail "wybierz opcję od 0 do 3." ;;
+    *) fail "wybierz opcję od 0 do 5." ;;
 esac
 
 umask 077
@@ -68,8 +70,10 @@ if [[ $action == install ]]; then
                 /dev/null "$manager/etc/"{decoders,rules}/**/*.xml; then
                 fail "znaleziono wcześniejszą integrację Stormshield. Zobacz docs/instalacja.md."
             fi
-        else
+        elif [[ $module == mikrotik_routeros ]]; then
             ids='11052[0-3]'
+        else
+            ids='11054[0-6]'
         fi
         for file in "$manager/etc/rules"/**/*.xml "$manager/ruleset/rules"/**/*.xml; do
             [[ $file != "$manager/etc/rules/${module}_rules.xml" ]] || continue

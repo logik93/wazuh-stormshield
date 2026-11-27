@@ -315,5 +315,82 @@
       "sns.translated_source": "203.0.113.9"
     },
     "description": "Stormshield SNS: blocking alarm 122 (Invalid char in SMTP header (ClientCmdNUL))"
+  },
+  {
+    "name": "QNAP: błąd logowania z IPv4",
+    "log": "Feb 10 17:00:00 nas-test qnap-qulog: [Users] Failed to log in. User: \"test operator\", Source IP: 192.0.2.10.",
+    "decoder": "qnap-qulog",
+    "rule": 110541,
+    "level": 6,
+    "fields": {
+      "qnap.component": "Users",
+      "srcip": "192.0.2.10",
+      "dstuser": "test operator"
+    }
+  },
+  {
+    "name": "QNAP: udane logowanie z IPv6",
+    "log": "Feb 10 17:00:00 nas-test qnap-qulog: [QuLog Center] Notification: [System Access] User [operator] logged in successfully from [2001:db8::21].",
+    "decoder": "qnap-qulog",
+    "rule": 110542,
+    "level": 3,
+    "fields": {
+      "qnap.component": "System Access",
+      "srcip": "2001:db8::21",
+      "dstuser": "operator"
+    }
+  },
+  {
+    "name": "QNAP: zdegradowana macierz",
+    "log": "Feb 10 17:00:00 nas-test qnap-qulog: [Storage & Snapshots] RAID group 1 is degraded.",
+    "decoder": "qnap-qulog",
+    "rule": 110543,
+    "level": 8,
+    "fields": {
+      "qnap.component": "Storage & Snapshots",
+      "qnap.message": "[Storage & Snapshots] RAID group 1 is degraded."
+    }
+  },
+  {
+    "name": "QNAP: nieudana kopia",
+    "log": "Feb 10 17:00:00 nas-test qnap-qulog: [Hybrid Backup Sync] Backup job \"daily\" failed.",
+    "decoder": "qnap-qulog",
+    "rule": 110544,
+    "level": 8,
+    "fields": {
+      "qnap.component": "Hybrid Backup Sync"
+    }
+  },
+  {
+    "name": "QNAP: udana kopia",
+    "log": "Feb 10 17:00:00 nas-test qnap-qulog: [HBS 3] Backup job \"daily\" completed successfully.",
+    "decoder": "qnap-qulog",
+    "rule": 110545,
+    "level": 3,
+    "fields": {}
+  },
+  {
+    "name": "QNAP: awaria wentylatora",
+    "log": "Feb 10 17:00:00 nas-test qnap-qulog: [Hardware Status] Fan 1 failure detected.",
+    "decoder": "qnap-qulog",
+    "rule": 110546,
+    "level": 7,
+    "fields": {}
+  },
+  {
+    "name": "QNAP: komunikat informacyjny",
+    "log": "Feb 10 17:00:00 nas-test qnap-qulog: [Storage & Snapshots] RAID synchronization completed successfully.",
+    "decoder": "qnap-qulog",
+    "rule": 110540,
+    "level": 0,
+    "fields": {}
+  },
+  {
+    "name": "QNAP: identyczny tekst z innego programu",
+    "log": "Feb 10 17:00:00 nas-test other-test: [Storage & Snapshots] RAID group 1 is degraded.",
+    "decoder": null,
+    "rule": null,
+    "level": null,
+    "fields": {}
   }
 ]

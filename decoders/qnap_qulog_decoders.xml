@@ -1,0 +1,28 @@
+<decoder name="qnap-qulog">
+  <type>syslog</type>
+  <program_name type="pcre2">^qnap-qulog$</program_name>
+</decoder>
+
+<decoder name="qnap-qulog">
+  <parent>qnap-qulog</parent>
+  <regex type="pcre2">^\s*(\S.*?)\s*$</regex>
+  <order>qnap.message</order>
+</decoder>
+
+<decoder name="qnap-qulog">
+  <parent>qnap-qulog</parent>
+  <regex type="pcre2">^\s*(?:\[QuLog Center\]\s+(?:Notification:\s+)?)?\[([^\]]+)\]</regex>
+  <order>qnap.component</order>
+</decoder>
+
+<decoder name="qnap-qulog">
+  <parent>qnap-qulog</parent>
+  <regex type="pcre2">(?i)\b(?:source\s+ip(?:\s+address)?\s*[:=]\s*|from\s+(?:ip(?:\s+address)?\s+)?)[\["']?(\d{1,3}(?:\.\d{1,3}){3}|[\da-f]*:[\da-f:.]+)(?=$|[\s\]"',;]|\.(?:\s|$))</regex>
+  <order>srcip</order>
+</decoder>
+
+<decoder name="qnap-qulog">
+  <parent>qnap-qulog</parent>
+  <regex type="pcre2">(?i)\b(?:user(?:name)?\s*[:=]\s*|user\s+\[)(?|"([^"]+)"|'([^']+)'|\[?([^\s\]",;']+))</regex>
+  <order>dstuser</order>
+</decoder>

@@ -1,0 +1,48 @@
+<group name="qnap,qulog,">
+  <rule id="110540" level="0">
+    <decoded_as>qnap-qulog</decoded_as>
+    <description>QNAP: zdarzenie QuLog</description>
+  </rule>
+
+  <rule id="110541" level="6">
+    <if_sid>110540</if_sid>
+    <field name="qnap.message" type="pcre2">(?i)\b(?:failed to (?:log|sign) in|(?:log[ -]?in|sign[ -]?in|authentication) (?:fail(?:ed|ure)|denied)|unsuccessful login)\b</field>
+    <description>QNAP: nieudane logowanie</description>
+    <group>authentication_failed,qnap_access,</group>
+  </rule>
+
+  <rule id="110542" level="3">
+    <if_sid>110540</if_sid>
+    <field name="qnap.message" type="pcre2">(?i)\b(?:logged in successfully|signed in successfully|successful login|login succeeded|authentication succeeded)\b</field>
+    <description>QNAP: udane logowanie</description>
+    <group>authentication_success,qnap_access,</group>
+  </rule>
+
+  <rule id="110543" level="8">
+    <if_sid>110540</if_sid>
+    <field name="qnap.message" type="pcre2">(?i)(?:\b(?:raid|storage pool|volume|disk|drive|s\.m\.a\.r\.t)\b.{0,140}\b(?:degraded|failed|failure|read.only|bad blocks?|i/o error|not healthy)\b|\b(?:bad blocks?|i/o error|failed disk|failed drive|raid degradation)\b)</field>
+    <description>QNAP: problem z dyskiem, macierzą lub woluminem</description>
+    <group>qnap_storage,</group>
+  </rule>
+
+  <rule id="110544" level="8">
+    <if_sid>110540</if_sid>
+    <field name="qnap.message" type="pcre2">(?i)(?:\b(?:backup|replication|snapshot|hybrid backup sync|hbs 3)\b.{0,160}\b(?:failed|failure|error|did not complete)\b|\bfailed to (?:back up|replicate|(?:create|take) (?:a )?snapshot)\b)</field>
+    <description>QNAP: błąd ochrony danych</description>
+    <group>qnap_backup,qnap_backup_failed,</group>
+  </rule>
+
+  <rule id="110545" level="3">
+    <if_sid>110540</if_sid>
+    <field name="qnap.message" type="pcre2">(?i)\b(?:backup|replication|snapshot)\b.{0,160}\b(?:completed successfully|finished successfully|succeeded|was successfully created)\b</field>
+    <description>QNAP: operacja ochrony danych zakończona pomyślnie</description>
+    <group>qnap_backup,qnap_backup_success,</group>
+  </rule>
+
+  <rule id="110546" level="7">
+    <if_sid>110540</if_sid>
+    <field name="qnap.message" type="pcre2">(?i)\b(?:overheat(?:ing|ed)?|(?:fan|power supply|ups)\b.{0,80}\b(?:failed|failure|disconnected)|improper shutdown|unexpected shutdown)\b</field>
+    <description>QNAP: problem sprzętowy lub zasilania</description>
+    <group>qnap_hardware,</group>
+  </rule>
+</group>

@@ -1,0 +1,77 @@
+# QNAP QuLog Center
+
+Moduł analizuje anglojęzyczne komunikaty tekstowe przesłane przez syslog. Obejmuje logowania, błędy dysków i RAID, kopie, migawki, replikację oraz wybrane awarie sprzętu i zasilania. Dashboard pokazuje alerty zapisane przez Wazuh. Harmonogram i stan ostatniej kopii nadal można sprawdzić w aplikacji kopii zapasowych na NAS-ie.
+
+## 1. Zainstaluj moduł na managerze
+
+Z katalogu repozytorium uruchom `sudo ./install.sh` i wybierz **4) QNAP QuLog Center**. Instalator ładuje pliki XML i sprawdza konfigurację. Polecenia ręczne oraz sposób wycofania zmian są w [instrukcji instalacji](instalacja.md).
+
+## 2. Przekaż logi z QuLog Center
+
+W QTS lub QuTS hero otwórz **QuLog Center → Log Sender** i dodaj cel syslog. Wybierz logi zdarzeń i dostępu, jeśli są dostępne dla danego firmware. W przykładzie serwer rsyslog działa na hoście managera Wazuh. Skonfiguruj NAS do wysyłania na jego adres przez **UDP 5515**. Ogranicz ten port do adresów NAS-ów w sieci zarządzającej.
+
+Poniżej przykładowy plik `/etc/rsyslog.d/35-wazuh-qnap.conf`. Podmień `192.0.2.50` na rzeczywisty adres NAS-a widoczny dla odbiornika. Jeśli masz już załadowany `imudp`, pomiń pierwszą linię. Wybierz wolny port i ustaw go także na NAS-ie. Konfiguracja zapisuje osobny plik i dodaje znacznik `qnap-qulog`, którego dekoder używa do rozpoznawania komunikatów.
+
+```rsyslog
+module(load="imudp")
+
+template(name="WazuhQnapLine" type="string"
+  string="%timegenerated:::date-rfc3164% %hostname% qnap-qulog: %msg:::drop-last-lf%\n")
+
+ruleset(name="WazuhQnap") {
+  if $fromhost-ip == "192.0.2.50" then {
+    action(type="omfile" file="/var/log/wazuh-qnap.log"
+      fileCreateMode="0640" template="WazuhQnapLine")
+  }
+}
+
+input(type="imudp" port="5515" ruleset="WazuhQnap")
+```
+
+Sprawdź składnię i po udanej walidacji zrestartuj rsyslog.
+
+```bash
+sudo rsyslogd -N1 &&
+sudo systemctl restart rsyslog
+```
+
+Poczekaj, aż w `/var/log/wazuh-qnap.log` pojawi się nowy wpis. Dodaj do istniejącego bloku `<ossec_config>` w `/var/ossec/etc/ossec.conf`:
+
+```xml
+<localfile>
+  <location>/var/log/wazuh-qnap.log</location>
+  <log_format>syslog</log_format>
+</localfile>
+```
+
+Sprawdź konfigurację i zrestartuj Wazuh:
+
+```bash
+sudo /var/ossec/bin/wazuh-analysisd -t &&
+sudo /var/ossec/bin/wazuh-logcollector -t &&
+sudo systemctl restart wazuh-manager
+```
+
+Dodaj ten plik do lokalnej rotacji logów rsyslog. Jeżeli rsyslog działa na oddzielnym hoście, ten sam blok `localfile` może czytać lokalny agent Wazuh na przekaźniku.
+
+## 3. Sprawdź log i dashboard
+
+1. Wklej jedną linię z pliku do `sudo /var/ossec/bin/wazuh-logtest`. W fazie 2 oczekuj dekodera `qnap-qulog`. W fazie 3 komunikat pasujący do jednej z reguł otrzyma ID `110541–110546`. Zdarzenie ogólne otrzyma poziom 0.
+2. W **Discover** wybierz zakres obejmujący nowe alerty i filtr `rule.groups: "qnap" AND rule.groups: "qulog"`. Jeśli nie widzisz wpisów, sprawdź zawartość pliku, próg `log_alert_level` i zapis alertów w managerze.
+3. Zaimportuj [dashboard QNAP QuLog · Ochrona danych i dostęp](../dashboard/qnap-qulog.ndjson). Plik zawiera 13 obiektów. [Instrukcja importu](../dashboard/README.md)
+
+| ID reguły | Co pojawi się w dashboardzie |
+| --- | --- |
+| `110541`, `110542` | Błędy i sukcesy logowania |
+| `110543` | Problemy z dyskami, RAID lub woluminem |
+| `110544`, `110545` | Wynik kopii zapasowej, replikacji lub migawki |
+| `110546` | Przegrzanie, awarie sprzętu lub zasilania |
+
+Na syntetycznych komunikatach sprawdzono odbiór UDP przez rsyslog, dekodowanie oraz zapis alertu przez `localfile` w Wazuh 4.14.5. Dashboard sprawdzono w przeglądarce z testowym indeksem alertów. Format, język i treść komunikatów różnią się zależnie od wersji QTS, QuTS hero i aplikacji. Jeżeli komunikat z konkretnego urządzenia trafia tylko do reguły `110540`, przyda się zanonimizowana pełna linia z pliku odbiornika oraz wersja NAS-a.
+
+## Źródła i inspiracje
+
+- Zestaw monitorowania MikroTika łączy widoki urządzeń z osobnym przeglądem sysloga. Tu używamy filtrów alertów Wazuh oraz tabel blokad, logowań i DHCP. [MKTXP Stack](https://github.com/akpw/mktxp-stack#mikrotik-centralized-logging-configuration)
+- Widoki Synology porządkują zdarzenia NAS-a według dostępu i operacji na danych. Ten pakiet dostosowuje te obszary do tekstowych komunikatów QNAP. [phastier/wazuh](https://github.com/phastier/wazuh#synology-dsm-nas)
+- Integracja QNAP w Home Assistant rozdziela kondycję dysków, woluminów i samego urządzenia. Nasz dashboard pokazuje zarejestrowane alerty w tych obszarach. [Home Assistant · QNAP](https://github.com/home-assistant/core/tree/dev/homeassistant/components/qnap)
+- QuLog Center zawiera konfigurację wysyłki logów do sysloga. Nazewnictwo opcji zależy od wersji systemu. [Dokumentacja QTS](https://docs.qnap.com/operating-system/qts/5.2.x/en-us/)

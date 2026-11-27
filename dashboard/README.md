@@ -1,4 +1,14 @@
-# Dashboard Stormshield SNS
+# Dashboardy urządzeń dla Wazuh
+
+Każde urządzenie ma własny dashboard i plik importu.
+
+| Dashboard | Co pokazuje | Obiekty w pliku |
+| --- | --- | ---: |
+| [Stormshield SNS · Monitorowanie](stormshield-sns.ndjson) | Blokady, alarmy, VPN, logowania i techniki MITRE | 16 |
+| [MikroTik RouterOS · Ruch i dostęp](mikrotik-routeros.ndjson) | Źródła, cele, porty i interfejsy blokad, metody logowania oraz klienci DHCP | 13 |
+| [QNAP QuLog · Ochrona danych i dostęp](qnap-qulog.ndjson) | Dostęp do NAS-a, wynik kopii i migawek oraz alerty o dyskach, RAID, sprzęcie i zasilaniu | 13 |
+
+W każdym dashboardzie ustaw przedział czasu i rozwiń wpis w panelu **Ostatnie alerty**. Jeżeli urządzenie nie zarejestrowało danego zdarzenia w wybranym czasie, odpowiedni licznik pokaże zero, a tabela może być pusta. Dla QNAP-a najpierw [skonfiguruj odbiór logów QuLog](../docs/qnap.md).
 
 **Stormshield SNS · Monitorowanie** pokazuje alerty z indeksów `wazuh-alerts-*`. Jeden plik NDJSON zawiera dashboard i wszystkie 15 paneli. Liczniki i wykres pokazują sytuację w wybranym czasie. Dziennik ostatnich alertów zawiera opis i adresy, a tabele pokazują, czego dotyczyły blokady i jak zapora zareagowała na alarmy.
 
@@ -6,18 +16,18 @@
 
 ## Aktualizacja istniejącego dashboardu
 
-Zaimportuj plik z opcją **Overwrite** w tym samym tenancie. Zostaw wyłączone **Create new copies**, aby kolejne aktualizacje trafiały do tych samych obiektów. Import powinien objąć 16 obiektów. Oryginalny dashboard ma identyfikator `logik93-stormshield-sns-overview`, widoczny w adresie po `#/view/`. Jeśli poprzedni import utworzył kopię z innym identyfikatorem, otwórz dashboard o oryginalnym identyfikatorze po aktualizacji. Jeśli korzystasz z własnego ID wzorca indeksu, użyj go również przy aktualizacji.
+Zaimportuj właściwy plik z opcją **Overwrite** w tym samym tenancie. Zostaw wyłączone **Create new copies**, aby kolejne aktualizacje trafiały do tych samych obiektów. Powyższa tabela podaje liczbę obiektów dla każdego pliku. Oryginalny dashboard Stormshield ma identyfikator `logik93-stormshield-sns-overview`, widoczny w adresie po `#/view/`. Jeśli poprzedni import utworzył kopię z innym identyfikatorem, otwórz dashboard o oryginalnym identyfikatorze po aktualizacji. Jeśli korzystasz z własnego ID wzorca indeksu, użyj go również przy aktualizacji.
 
 Jeżeli w **Visualize** widzisz sześć angielskich pozycji zaczynających się od `Stormshield -`, to wizualizacje starszego pakietu. Nowy dashboard obejmuje odpowiadające im widoki. Jeśli chcesz uporządkować listę, wyeksportuj poprzedni dashboard wraz z wizualizacjami jako kopię, sprawdź nowy widok, a potem usuń w **Saved Objects** stary dashboard i tylko te sześć wizualizacji, o ile inne dashboardy ich nie używają. Zachowaj wzorzec indeksu alertów.
 
 ## Import do Wazuh Dashboard
 
 1. W obszarze (tenant) używanym do przeglądania alertów Wazuh przejdź do **Dashboard Management → Saved Objects → Import**.
-2. Wybierz `stormshield-sns.ndjson`. Przy pierwszym imporcie możesz zostawić opcję nadpisywania wyłączoną. Włącz ją przy aktualizacji tego samego dashboardu.
+2. Wybierz plik NDJSON dla swojego urządzenia. Przy pierwszym imporcie możesz zostawić opcję nadpisywania wyłączoną. Włącz ją przy aktualizacji tego samego dashboardu.
 3. Plik odwołuje się do standardowego wzorca indeksu `wazuh-alerts-*`. Jeśli importer zgłosi brakującą referencję, wskaż istniejący wzorzec alertów Wazuh z polem czasu `timestamp`. Jeżeli Twoja wersja importera nie pozwala przypisać referencji, odczytaj ID wzorca w **Index Patterns** i zmień w pliku wartości `"id":"wazuh-alerts-*"` w referencjach typu `index-pattern`.
-4. Otwórz **Stormshield SNS · Monitorowanie** w **Dashboards** i ustaw zakres czasu, np. **Last 24 hours**.
+4. Otwórz wybrany dashboard w **Dashboards** i ustaw zakres czasu, np. **Last 24 hours**.
 
-## Jak czytać dashboard
+## Jak czytać dashboard Stormshield
 
 1. Ustaw **Last 24 hours** na początek. Liczniki pokazują alerty z wybranego okresu.
 2. W panelu **Ostatnie alerty** przeczytaj opis zdarzenia. Użyj strzałki przy wpisie, aby rozwinąć szczegóły, w tym oryginalny log, jeżeli zapisał go Wazuh.

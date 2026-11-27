@@ -30,19 +30,19 @@ Skrypt wymaga Bash, systemd i `flock` z pakietu `util-linux`. Na hoście z manag
 sudo ./install.sh
 ```
 
-Wybierz Stormshield SNS, MikroTik RouterOS lub oba moduły. Skrypt pokaże listę plików i poprosi o potwierdzenie przed ich zmianą. Sprawdzi konfigurację przez `wazuh-analysisd -t`, zrestartuje managera i sprawdzi stan usługi. Jeśli walidacja lub restart się nie powiedzie, skrypt odtworzy pliki sprzed operacji. Po zakończeniu wyświetli ścieżkę do kopii, jeśli operacja została rozpoczęta.
+Wybierz Stormshield SNS, MikroTik RouterOS, QNAP lub wszystkie moduły. Skrypt pokaże listę plików i poprosi o potwierdzenie przed ich zmianą. Sprawdzi konfigurację przez `wazuh-analysisd -t`, zrestartuje managera i sprawdzi stan usługi. Jeśli walidacja lub restart się nie powiedzie, skrypt odtworzy pliki sprzed operacji. Po zakończeniu wyświetli ścieżkę do kopii, jeśli operacja została rozpoczęta.
 
 Jeśli syslog już działa, przejdź do kroku 4, a następnie zaimportuj dashboard. Dla nowego nasłuchu wykonaj kroki 2 i 3. Skrypt zarządza plikami reguł i dekoderów. Konfigurację odbioru sysloga i dashboard dodajesz osobno.
 
 ### Instalacja ręczna
 
-Na hoście managera, z katalogu repozytorium, sprawdź czy zakresy `110500–110509` i `110520–110523` są wolne w Twoim zestawie reguł. Jeżeli inny pakiet rozpoznaje te same komunikaty, wybierz jeden zestaw dekoderów i odpowiadających mu reguł. Przy aktualizacji zachowaj kopie zastępowanych plików XML oraz kopię `/var/ossec/etc/ossec.conf`.
+Na hoście managera, z katalogu repozytorium, sprawdź czy zakresy `110500–110509`, `110520–110523` i `110540–110546` są wolne w Twoim zestawie reguł. Jeżeli inny pakiet rozpoznaje te same komunikaty, wybierz jeden zestaw dekoderów i odpowiadających mu reguł. Przy aktualizacji zachowaj kopie zastępowanych plików XML oraz kopię `/var/ossec/etc/ossec.conf`.
 
 ```bash
-sudo grep -RE 'id="(11050[0-9]|11052[0-3])"' /var/ossec/etc/rules /var/ossec/ruleset/rules
+sudo grep -RE 'id="(11050[0-9]|11052[0-3]|11054[0-6])"' /var/ossec/etc/rules /var/ossec/ruleset/rules
 ```
 
-Zainstaluj Stormshield SNS. Uruchom drugi blok, jeśli chcesz dodać MikroTik.
+Uruchom bloki dla wybranych urządzeń.
 
 ```bash
 sudo install -o root -g wazuh -m 0640 decoders/stormshield_sns_decoders.xml /var/ossec/etc/decoders/
@@ -54,9 +54,16 @@ sudo install -o root -g wazuh -m 0640 decoders/mikrotik_routeros_decoders.xml /v
 sudo install -o root -g wazuh -m 0640 rules/mikrotik_routeros_rules.xml /var/ossec/etc/rules/
 ```
 
+```bash
+sudo install -o root -g wazuh -m 0640 decoders/qnap_qulog_decoders.xml /var/ossec/etc/decoders/
+sudo install -o root -g wazuh -m 0640 rules/qnap_qulog_rules.xml /var/ossec/etc/rules/
+```
+
 Jeśli manager działa w kontenerze, umieść pliki w odpowiednich trwałych katalogach managera. W klastrze wprowadź zmiany zestawu reguł na węźle master i sprawdź ich synchronizację przed skierowaniem ruchu na węzły odbierające syslog.
 
 ## 2. Włącz odbiór sysloga
+
+Jeśli instalujesz QNAP, użyj [dedykowanej konfiguracji rsyslog i localfile](qnap.md). Dla Stormshielda i MikroTika wykonaj poniższe kroki.
 
 Wewnątrz istniejącego `<ossec_config>` w `/var/ossec/etc/ossec.conf` dodaj blok albo uzupełnij istniejący nasłuch sysloga na tym porcie. Podmień przykładowe adresy na adresy nadawców widoczne z managera. Dodaj tylko wpisy dla używanych nadawców.
 
@@ -103,12 +110,12 @@ Tematy i szczegóły zdalnej akcji sprawdź w konfiguracji swojej wersji RouterO
 ## 4. Sprawdź wdrożenie
 
 1. Wklej jedną surową linię z urządzenia do `sudo /var/ossec/bin/wazuh-logtest`. W fazie 2 sprawdź dekoder i pola, a w fazie 3 oczekiwaną regułę. Przykładowe komunikaty do odtworzenia są w [zestawie testowym](../tests/cases.json).
-2. Sprawdź zdarzenie z urządzenia na managerze, lokalnie w `/var/ossec/logs/alerts/alerts.json` albo w Wazuh Dashboard po `rule.groups:stormshield` lub `rule.groups:mikrotik`. Gdy faza 3 pokazuje poziom 0, wpis jest dekodowany bez alertu. Sprawdź ustawienie `log_alert_level`, jeżeli poziom reguły jest niższy niż próg managera.
+2. Sprawdź zdarzenie z urządzenia na managerze, lokalnie w `/var/ossec/logs/alerts/alerts.json` albo w Wazuh Dashboard po `rule.groups:stormshield`, `rule.groups:mikrotik` lub `rule.groups:qnap`. Gdy faza 3 pokazuje poziom 0, wpis jest dekodowany bez alertu. Sprawdź ustawienie `log_alert_level`, jeżeli poziom reguły jest niższy niż próg managera.
 3. Jeśli dekodowanie lokalne działa, a alert nie dociera po sieci, sprawdź transport, faktyczny adres źródłowy widziany przez managera, `allowed-ips`, port oraz komunikaty managera w `/var/ossec/logs/ossec.log`. Do sprawdzenia rzeczywistej treści zdarzeń użyj surowego logu z przekaźnika lub archiwum Wazuh, jeżeli jest już włączone.
 
-## 5. Zaimportuj dashboard Stormshield SNS
+## 5. Zaimportuj dashboard
 
-Zaimportuj [plik NDJSON](../dashboard/stormshield-sns.ndjson) przez **Dashboard Management → Saved Objects → Import**. Następnie otwórz **Stormshield SNS · Monitorowanie**, wybierz okres po wdrożeniu i sprawdź, czy pojawiają się nowe alerty. [Instrukcja importu i wybór wzorca indeksu](../dashboard/README.md)
+Wybierz plik NDJSON dla swojego urządzenia i zaimportuj go przez **Dashboard Management → Saved Objects → Import**. Otwórz właściwy dashboard i wybierz okres obejmujący nowe alerty. [Pliki dashboardów i instrukcja importu](../dashboard/README.md)
 
 ## Wycofanie zmian
 
