@@ -78,7 +78,7 @@ Na syntetycznych komunikatach sprawdzono odbiór UDP przez rsyslog, dekodowanie 
 
 ## Wolne miejsce na woluminach
 
-Panel **Wolne miejsce na woluminach** pokazuje ostatni odczyt każdego woluminu w wybranym okresie. Są w nim wolne miejsce, pojemność, procent wolnego i moment odczytu w UTC. Po braku nowych pomiarów sprawdź datę w tabeli i działanie kolektora. Dane dotyczą woluminów udostępnionych przez NAS-MIB, a pojemność puli może się różnić, zwłaszcza przy woluminach thin.
+Panel **Wolne miejsce na woluminach** pokazuje ostatni odczyt każdego woluminu w wybranym okresie. Są w nim wolne miejsce, pojemność, procent wolnego i moment odczytu w UTC. Gdy w wybranym okresie nie ma pomiarów, panel wyświetla komunikat. Sprawdź działanie kolektora i obecność alertu `110547` w indeksie. Dane dotyczą woluminów udostępnionych przez NAS-MIB, a pojemność puli może się różnić, zwłaszcza przy woluminach thin.
 
 ### 1. Udostępnij pomiary przez SNMPv3
 

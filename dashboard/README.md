@@ -31,7 +31,7 @@ Jeżeli w **Visualize** widzisz sześć angielskich pozycji zaczynających się 
 
 Jeśli tabelki pokazują **No results found**, w **Discover** ustaw okres, w którym RouterOS wysyłał logi, i sprawdź filtr `rule.groups: "mikrotik" AND rule.groups: "routeros"`. Dla blokad sprawdź prefiks `WAZUH-DROP` i regułę `110521`. Wybrane logowania i przydziały DHCP mają reguły `110522` i `110523`.
 
-Jeśli panel zgłasza **Could not locate that index-pattern-field**, sprawdź w **Discover** pierwszy alert, który powinien zawierać dane pole. Po pojawieniu się pola w indeksie odśwież listę pól wzorca `wazuh-alerts-*`. [Odbiór logów RouterOS](../docs/instalacja.md#mikrotik-routeros-7)
+Panele interfejsów, metod logowania i klientów DHCP pokazują komunikat o braku danych, dopóki w wybranym okresie nie pojawi się alert z danym polem. Jeżeli nadal widzisz **Could not locate that index-pattern-field** w tych panelach, zaimportuj aktualny plik MikroTik z opcją **Overwrite** i otwórz oryginalny dashboard `logik93-mikrotik-routeros-overview`. [Odbiór logów RouterOS](../docs/instalacja.md#mikrotik-routeros-7)
 
 ## Jak czytać dashboard Stormshield
 
@@ -57,3 +57,5 @@ Liczniki pokazują dokumenty alertów. Licznik blokad uwzględnia także pojedyn
 | Techniki MITRE ATT&CK | `rule.mitre.id` i licznik alertów bez tego pola |
 
 Import i zapytania paneli sprawdzono w OpenSearch Dashboards 2.19.4 z próbkami zapisanymi według mapowania Wazuh 4.14.5.
+
+Panele pojemności QNAP oraz interfejsów, metod logowania i klientów DHCP MikroTika używają wbudowanej wizualizacji Vega. Odczytują indeksy `wazuh-alerts-*` z aktualnym zakresem czasu i filtrami dashboardu. W instalacji z inną nazwą indeksów zmień `index` w specyfikacjach tych paneli. Specyfikacje w plikach NDJSON można odtworzyć przez `python3 dashboard/build_device_panels.py`.
